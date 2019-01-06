@@ -1,0 +1,241 @@
+// Give this file to javacup program and insert the resulting .class files into your project!!
+import it.unisa.ast.MyNode;
+import it.unisa.ast.args.ArgsNode;
+import it.unisa.ast.declaration.procedure.ProcedureDeclarationNode;
+import it.unisa.ast.declaration.procedure.parameter.*;
+import it.unisa.ast.declaration.variable.VarDeclarationNode;
+import it.unisa.ast.expression.ExpressionNode;
+import it.unisa.ast.expression.arithmetic.*;
+import it.unisa.ast.expression.bool.AndOpNode;
+import it.unisa.ast.expression.bool.BoolOpNode;
+import it.unisa.ast.expression.bool.OrOpNode;
+import it.unisa.ast.expression.constant.*;
+import it.unisa.ast.expression.identifier.IdentifierNode;
+import it.unisa.ast.expression.relational.*;
+import it.unisa.ast.expression.unary.NotOpNode;
+import it.unisa.ast.expression.unary.UminusOpNode;
+import it.unisa.ast.initialization.VarInitNode;
+import it.unisa.ast.list.*;
+import it.unisa.ast.programma.ProgrammaNode;
+import it.unisa.ast.statement.*;
+import it.unisa.ast.kind.*;
+import it.unisa.lexer.Yylex;
+
+import java.util.LinkedHashSet;
+
+class Parser;
+parser code {:
+    // Connect the generated parser to your lexer!
+    private Yylex lexer;
+    public Parser(Yylex lexer) {
+        this.lexer = lexer;
+    }
+:}
+
+/* Define how the parser must use the lexer! */
+scan with {: return lexer.next_token(); :};
+
+/* Terminals (tokens returned by the lexer, but also virtual terminals).
+    Here you can specify the attribute bounded to the token
+*/
+terminal HEAD, START, SEMI, INT, BOOL, DOUBLE, STRING, CHAR, COMMA;
+terminal String ID;             // Stores the value
+terminal DEF, LPAR, RPAR, LGPAR, RGPAR, IN, OUT, INOUT;
+// UMINUS is virtual
+terminal READ, WRITE, PLUS, MINUS, UMINUS, TIMES, DIV;
+terminal Integer INT_CONST;     // Stores the int value
+terminal Double DOUBLE_CONST;   // Stores the double value
+terminal String STRING_CONST;   // Stores the string value
+terminal Character CHAR_CONST;  // Stores the char value
+
+terminal TRUE, FALSE, ASSIGN;
+terminal IF, THEN, ELSE, WHILE, DO;
+terminal GT, GE, LT, LE, EQ, NOT, AND, OR;
+
+/* Non terminals, here you can specify the attribute bounded to the non terminals
+    The attributes are typically nodes of the AST
+*/
+non terminal ProgrammaNode Programma;
+non terminal DeclarationListNode Decls;
+
+non terminal VarDeclarationListNode Var_decls;
+non terminal VarDeclarationNode Var_decl;
+non terminal TypeNode Type;
+non terminal VarInitListNode Var_decls_init;
+non terminal VarInitNode Var_init_value;
+
+non terminal ProcedureDeclarationNode Def_decl;
+non terminal ParDeclarationListNode Par_decls;  // Helped by ParDeclarationNode
+non terminal ParTypeNode Par_type;
+
+non terminal BodyNode Body;
+non terminal StatementListNode Statements, Comp_stat;
+
+non terminal StatementNode Stat;
+non terminal ArgsNode Args;
+non terminal ExpressionNode Expr;
+//non terminal ArithOpNode Arith_op;
+//non terminal BoolOpNode Bool_op;
+//non terminal RelOpNode Rel_op;
+
+// Easy Empty string modelling.
+non terminal empty;
+
+/* Precedences */
+precedence left OR;
+precedence left AND;
+precedence left GT, GE, LT, LE, EQ;
+precedence left PLUS, MINUS;
+precedence left TIMES, DIV;
+precedence left UMINUS;
+precedence left NOT;
+precedence left RPAR;
+
+/* Starting non terminal */
+start with Programma;
+
+/* Grammar rules */
+
+////////////////////////////////////////// General structure //////////////////////////////////////////
+Programma ::= HEAD Decls: d START Statements: s     {: ProgrammaNode p = new ProgrammaNode(); p.add(d); p.add(s); RESULT = p; :}
+;
+// Lista di definizione di funzioni e di var globali
+Decls ::= Var_decl: v Decls: l                      {: DeclarationListNode n = new DeclarationListNode(); n.add(v); if (!l.subtrees().isEmpty()) {n.addSubtrees((LinkedHashSet<MyNode>) l.subtrees());} RESULT = n; :}
+    | Def_decl: d Decls: l                          {: DeclarationListNode n = new DeclarationListNode(); n.add(d); if (!l.subtrees().isEmpty()) {n.addSubtrees((LinkedHashSet<MyNode>) l.subtrees());} RESULT = n; :}
+    | empty                                         {: RESULT = new DeclarationListNode(); :}
+;
+
+////////////////////////////////////////// Variable declaration //////////////////////////////////////////
+// Lista di dichiarazione ed eventuale inizializzazione di una lista di variabili di un certo tipo
+Var_decls ::= Var_decl: v Var_decls: l              {: VarDeclarationListNode n = new VarDeclarationListNode(); n.add(v); if (!l.subtrees().isEmpty()) {n.addSubtrees((LinkedHashSet<MyNode>) l.subtrees());} RESULT = n; :}
+    | empty                                         {: RESULT = new VarDeclarationListNode(); :}
+;
+// Dichiarazione ed eventuale inizializzazione di una lista di variabili di un certo tipo
+Var_decl ::= Type: t Var_decls_init: i SEMI         {: VarDeclarationNode v = new VarDeclarationNode(); v.add(t); v.add(i); RESULT = v; :}
+;
+// Tipi di dati
+Type ::= INT                                        {: RESULT = new IntegerNode(); :}
+    | BOOL                                          {: RESULT = new BooleanNode(); :}
+    | DOUBLE                                        {: RESULT = new DoubleNode(); :}
+    | STRING                                        {: RESULT = new StringNode(); :}
+    | CHAR                                          {: RESULT = new CharacterNode(); :}
+;
+// Dichiarazione ed eventuale inizializzazione di una variabile
+Var_decls_init ::= ID: id Var_init_value: iv COMMA Var_decls_init: l    {: VarInitListNode n = new VarInitListNode(); VarInitNode vin = new VarInitNode(); vin.add(new IdentifierNode(id)); if (!iv.subtrees().isEmpty()) {vin.addSubtrees((LinkedHashSet<MyNode>) iv.subtrees());} n.add(vin); if (!l.subtrees().isEmpty()) {n.addSubtrees((LinkedHashSet<MyNode>) l.subtrees());} RESULT = n; :}
+ 	| ID: id Var_init_value: iv                                         {: VarInitListNode n = new VarInitListNode(); VarInitNode vin = new VarInitNode(); vin.add(new IdentifierNode(id)); if (!iv.subtrees().isEmpty()) {vin.addSubtrees((LinkedHashSet<MyNode>) iv.subtrees());} n.add(vin); RESULT = n; :}
+;
+// Eventuale inizializzazione di una variabile
+Var_init_value ::= ASSIGN Expr: e                                       {: VarInitNode n = new VarInitNode(); n.add(e); RESULT = n; :}
+ 	| empty                                                             {: RESULT = new VarInitNode(); :}
+;
+
+////////////////////////////////////////// Procedure declaration //////////////////////////////////////////
+// Definizione funzione con eventuale lista parametri
+Def_decl ::= DEF ID: id LPAR Par_decls: p RPAR Body: b          {: ProcedureDeclarationNode n = new ProcedureDeclarationNode(); n.add(new IdentifierNode(id)); n.add(p); n.add(b); RESULT = n; :}
+    | DEF ID: id LPAR RPAR Body: b                              {: ProcedureDeclarationNode n = new ProcedureDeclarationNode(); n.add(new IdentifierNode(id)); n.add(new ParDeclarationListNode()); n.add(b); RESULT = n; :}
+;
+// Lista parametri formali
+Par_decls ::= Par_type: pt Type: t ID: id COMMA Par_decls: l    {: ParDeclarationNode p = new ParDeclarationNode(); p.add(pt); p.add(t); p.add(new IdentifierNode(id)); ParDeclarationListNode n = new ParDeclarationListNode(); n.add(p); if (!l.subtrees().isEmpty()) {n.addSubtrees((LinkedHashSet<MyNode>) l.subtrees());} RESULT = n; :}
+    | Par_type: pt Type: t ID: id                               {: ParDeclarationNode p = new ParDeclarationNode(); p.add(pt); p.add(t); p.add(new IdentifierNode(id)); ParDeclarationListNode n = new ParDeclarationListNode(); n.add(p); RESULT = n; :}
+;
+// Tipologia di parametri
+Par_type ::= IN                                                 {: RESULT = new InNode(); :}
+    | OUT                                                       {: RESULT = new OutNode(); :}
+    | INOUT                                                     {: RESULT = new InOutNode(); :}
+;
+
+////////////////////////////////////////// Body of procedures //////////////////////////////////////////
+// Corpo di una funzione
+Body ::= LGPAR Var_decls: v Statements: s RGPAR             {: BodyNode n = new BodyNode(); n.add(v); n.add(s); RESULT = n; :}
+;
+// Lista di statement
+Statements ::= Stat: s Statements: l                        {: StatementListNode n = new StatementListNode(); n.add(s); if (!l.subtrees().isEmpty()) {n.addSubtrees((LinkedHashSet<MyNode>) l.subtrees());} RESULT = n; :}
+    | empty                                                 {: RESULT = new StatementListNode(); :}
+;
+// Blocco statement
+Comp_stat ::= LGPAR Statements: l RGPAR                     {: RESULT = l; :}
+;
+
+////////////////////////////////////////// Expressions and operations //////////////////////////////////////////
+// Statement singolo
+Stat ::= Args: a READ SEMI                                          {: ReadOpNode n = new ReadOpNode(); n.add(a); RESULT = n; :}
+        // Vars è stato cambiato in Args: si rimanda all'analisi semantica se la read prende solo una lista di ID e non di espressioni
+ 	| Args: a WRITE SEMI                                            {: WriteOpNode n = new WriteOpNode(); n.add(a); RESULT = n; :}
+ 	| ID: id ASSIGN Expr: e SEMI                                    {: AssignOpNode n = new AssignOpNode(); n.add(new IdentifierNode(id)); n.add(e); RESULT = n; :}
+ 	| ID: id LPAR Args: a RPAR SEMI                                 {: CallOpNode n = new CallOpNode(); n.add(new IdentifierNode(id)); n.add(a); RESULT = n; :}
+    | ID: id LPAR RPAR SEMI                                         {: CallOpNode n = new CallOpNode(); n.add(new IdentifierNode(id)); RESULT = n; :}
+    | IF LPAR Expr: e RPAR THEN Comp_stat: c1 ELSE Comp_stat: c2    {: IfThenElseOpNode n = new IfThenElseOpNode(); n.add(e); n.add(c1); n.add(c2); RESULT = n; :}
+    | IF LPAR Expr: e RPAR THEN Comp_stat: c                        {: IfThenOpNode n = new IfThenOpNode(); n.add(e); n.add(c); RESULT = n; :}
+    | WHILE LPAR Expr: e RPAR DO Comp_stat: c                       {: WhileOpNode n = new WhileOpNode(); n.add(e); n.add(c); RESULT = n; :}
+;
+
+// Una semplice lista di espressioni, usata nella read, nella write e come parametri attuali
+Args ::= Expr: e COMMA Args: a          {: ArgsNode n = new ArgsNode(); n.add(e); if (!a.subtrees().isEmpty()) {n.addSubtrees((LinkedHashSet<MyNode>) a.subtrees());} RESULT = n; :}
+    | Expr: e                           {: ArgsNode n = new ArgsNode(); n.add(e); RESULT = n; :}
+;
+
+// Espressione (molto generica), cambiata totalmente per via di un problema con le precedenze. La versione originale è in fondo al file
+Expr ::= Expr: e1 PLUS Expr: e2         {: PlusOpNode op = new PlusOpNode(); op.add(e1); op.add(e2); RESULT = op; :}
+    | Expr: e1 MINUS Expr: e2           {: MinusOpNode op = new MinusOpNode(); op.add(e1); op.add(e2); RESULT = op; :}
+    | Expr: e1 TIMES Expr: e2           {: TimesOpNode op = new TimesOpNode(); op.add(e1); op.add(e2); RESULT = op; :}
+    | Expr: e1 DIV Expr: e2             {: DivOpNode op = new DivOpNode(); op.add(e1); op.add(e2); RESULT = op; :}
+    | MINUS Expr: e	                    {: UminusOpNode n = new UminusOpNode(); n.add(e); RESULT = n; :} %prec UMINUS
+    | Expr: e1 AND Expr: e2             {: AndOpNode op = new AndOpNode(); op.add(e1); op.add(e2); RESULT = op; :}
+    | Expr: e1 OR Expr: e2              {: OrOpNode op = new OrOpNode(); op.add(e1); op.add(e2); RESULT = op; :}
+    | NOT Expr: e                       {: NotOpNode n = new NotOpNode(); n.add(e); RESULT = n; :}
+    | Expr: e1 GT Expr: e2              {: GTOpNode op = new GTOpNode(); op.add(e1); op.add(e2); RESULT = op; :}
+    | Expr: e1 GE Expr: e2              {: GEOpNode op = new GEOpNode(); op.add(e1); op.add(e2); RESULT = op; :}
+    | Expr: e1 LT Expr: e2              {: LTOpNode op = new LTOpNode(); op.add(e1); op.add(e2); RESULT = op; :}
+    | Expr: e1 LE Expr: e2              {: LEOpNode op = new LEOpNode(); op.add(e1); op.add(e2); RESULT = op; :}
+    | Expr: e1 EQ Expr: e2              {: EQOpNode op = new EQOpNode(); op.add(e1); op.add(e2); RESULT = op; :}
+    | LPAR Expr: e RPAR                 {: RESULT = e; :}
+    | TRUE                              {: RESULT = new TrueNode(); :}
+    | FALSE                             {: RESULT = new FalseNode(); :}
+    | ID: value                         {: RESULT = new IdentifierNode(value); :}
+    | INT_CONST: value                  {: RESULT = new IntegerConstantNode(value); :}
+    | DOUBLE_CONST: value               {: RESULT = new DoubleConstantNode(value); :}
+    | CHAR_CONST: value                 {: RESULT = new CharConstantNode(value); :}
+    | STRING_CONST: value               {: RESULT = new StringConstantNode(value); :}
+;
+
+/* Javacup possible bug: in the generated parser class, there will be an error in the case of the empty reduction in a statement like this:
+   CUP$Parser$result = parser.getSymbolFactory().newSymbol("empty", 19, ((java_cup.runtime.Symbol) CUP$Parser$stack.getCurrentScope()), ((java_cup.runtime.Symbol) CUP$Parser$stack.getCurrentScope()), RESULT);
+   In order to fix this add an extra parameter after the second one. This parameter is the same of the second one.
+*/
+empty ::=
+;
+
+/*
+// Espressione (molto generica)
+Expr ::= Expr: e1 Arith_op: op Expr: e2 {: System.out.println(op.getXMLTag()); op.add(e1); op.add(e2); RESULT = op; :}
+    | Expr: e1 Bool_op: op Expr: e2     {: op.add(e1); op.add(e2); RESULT = op; :}
+    | Expr: e1 Rel_op: op Expr: e2      {: op.add(e1); op.add(e2); RESULT = op; :}
+    | MINUS Expr: e	                    {: UminusOpNode n = new UminusOpNode(); n.add(e); RESULT = n; :} %prec UMINUS
+    | NOT Expr: e                       {: NotOpNode n = new NotOpNode(); n.add(e); RESULT = n; :}
+    | LPAR Expr: e RPAR                 {: RESULT = e; :}
+    | TRUE                              {: RESULT = new TrueNode(); :}
+    | FALSE                             {: RESULT = new FalseNode(); :}
+    | ID: value                         {: RESULT = new IdentifierNode(value); :}
+    | INT_CONST: value                  {: RESULT = new IntegerConstantNode(value); :}
+    | DOUBLE_CONST: value               {: RESULT = new DoubleConstantNode(value); :}
+    | CHAR_CONST: value                 {: RESULT = new CharConstantNode(value); :}
+    | STRING_CONST: value               {: RESULT = new StringConstantNode(value); :}
+;
+// Operatori aritmetici binari
+Arith_op ::= PLUS                       {: RESULT = new PlusOpNode(); :}
+    | MINUS                             {: RESULT = new MinusOpNode(); :}
+    | TIMES                             {: RESULT = new TimesOpNode(); :}
+    | DIV                               {: RESULT = new DivOpNode(); :}
+;
+// Operatori aritmetici binari
+Bool_op ::= AND                         {: RESULT = new AndOpNode(); :}
+    | OR                                {: RESULT = new OrOpNode(); :}
+;
+// Operatori relazionali binari
+Rel_op ::= GT                           {: RESULT = new GTOpNode(); :}
+    | GE                                {: RESULT = new GEOpNode(); :}
+    | LT                                {: RESULT = new LTOpNode(); :}
+    | LE                                {: RESULT = new LEOpNode(); :}
+    | EQ                                {: RESULT = new EQOpNode(); :}
+;
+*/

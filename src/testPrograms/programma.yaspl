@@ -1,0 +1,71 @@
+/*
+    Scrivere un programma YASPL.3 (si veda questo esempio di codice) che
+    1.visualizzi un menu in cui un utente può scegliere l' operazione aritmetica da svolgere
+    2.richieda all'utente gli input (interi o double) necessari per svolgere l'operazione scelta
+    3.esegua l'operazione, restituisca il risultato e chieda se si vuol continuare
+    4.all'input 0 oppure 1 il programma  conclude oppure mostra il menu iniziale, rispettivamente.
+    N.B. si utilizzino almeno due funzioni. In generale, si cerchi di utilizzare tutte le  (poche) caratteristiche del linguaggio.
+*/
+
+head
+    int scelta = 1;
+    double primoNumero, secondoNumero, risultato;
+
+    def mostraMenu() {
+        "0. Termina\n" ->;
+        "1. Mostra il menu\n" ->;
+        "2. Somma\n" ->;
+        "3. Sottrazione\n" ->;
+        "4. Prodotto\n" ->;
+        "5. Divisione\n" ->;
+    }
+
+    def scegliOperazione(out int scelta) {
+        "Scegli l'operazione: " ->;
+        scelta = -1;
+        while(scelta < 0 and scelta > 5) do {
+            scelta <-;
+        }
+    }
+
+    def inserisciNumeri(out double primo, out double secondo) {
+        "Inserisci il primo numero:" ->;
+        primoNumero <-;
+        "Inserisci il secondo numero:" ->;
+        secondoNumero <-;
+    }
+
+    def eseguiOperazione(in double primo, in double secondo, in int operazione, out double risultato) {
+        double res = 0;
+        if(operazione == 2) then {
+            res = primoNumero + secondoNumero;
+        } else {
+            if(operazione == 3) then {
+                res = primoNumero - secondoNumero;
+            } else {
+                if(operazione == 4) then {
+                    res = primoNumero - secondoNumero;
+                } else {
+                    if(operazione == 5) then {
+                        if(not (secondoNumero == 0)) then {
+                            res = primoNumero / secondoNumero;
+                        }
+                    }
+                }
+            }
+        }
+        risultato = res;
+    }
+
+start
+    while (not (scelta == 0)) do {
+        if (scelta == 1) then {
+            mostraMenu();
+        } else {
+            inserisciNumeri(primoNumero, secondoNumero);
+            eseguiOperazione(primoNumero, secondoNumero, scelta, risultato);
+            risultato ->;
+        }
+        scegliOperazione(scelta);
+    }
+    "Arriverderci!", "\nBuona giornata"->;

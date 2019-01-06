@@ -1,0 +1,74 @@
+head
+    int scelta = 1;
+    double primoNumero, secondoNumero, risultato;
+    int global;
+
+    def mostraMenu(in int sharedParameter) {
+        int sharedParameter;
+        sharedParameter = 2;
+
+        nonVariable1 = 10;
+        nonVariable2 = nonVariable2 + nonVariable3;
+        nonVariable4 <-;
+        nonProcedure(nonParameter1, nonParameter2);
+        nonOut ->;
+    }
+
+    def mostraMenu() {
+        "0. Termina\n" ->;
+        "1. Mostra il menu\n" ->;
+        "2. Somma\n" ->;
+        "3. Sottrazione\n" ->;
+        "4. Prodotto\n" ->;
+        "5. Divisione\n" ->;
+    }
+
+    def scegliOperazione(out int scelta) {
+        "Scegli l'operazione: " ->;
+        scelta = -1;
+        while(scelta < 0 and scelta > 5) do {
+            scelta <-;
+        }
+    }
+
+    def inserisciNumeri(out double primo, out double secondo) {
+        "Inserisci il primo numero:" ->;
+        primoNumero <-;
+        "Inserisci il secondo numero:" ->;
+        secondoNumero <-;
+    }
+
+    def eseguiOperazione(in double primo, in double secondo, in int operazione, out double risultato) {
+        double res = 0;
+        if(operazione == 2) then {
+            res = primoNumero + secondoNumero;
+        } else {
+            if(operazione == 3) then {
+                res = primoNumero - secondoNumero;
+            } else {
+                if(operazione == 4) then {
+                    res = primoNumero - secondoNumero;
+                } else {
+                    if(operazione == 5) then {
+                        if(not (secondoNumero == 0)) then {
+                            res = primoNumero / secondoNumero;
+                        }
+                    }
+                }
+            }
+        }
+        risultato = res;
+    }
+
+start
+    while (not (scelta == 0)) do {
+        if (scelta == 1) then {
+            mostraMenu();
+        } else {
+            inserisciNumeri(primoNumero, secondoNumero);
+            eseguiOperazione(primoNumero, secondoNumero, scelta, risultato);
+            risultato ->;
+        }
+        scegliOperazione(scelta);
+    }
+    "Arriverderci!", "\nBuona giornata"->;

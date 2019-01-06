@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="de.jflex:jflex:1.7.0" type="repository">
+    <properties maven-id="de.jflex:jflex:1.7.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/de/jflex/jflex/1.7.0/jflex-1.7.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/de/jflex/cup_runtime/11b/cup_runtime-11b.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/ant/ant/1.9.7/ant-1.9.7.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/ant/ant-launcher/1.9.7/ant-launcher-1.9.7.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/de/jflex/jflex/1.7.0/jflex-1.7.0-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/de/jflex/cup_runtime/11b/cup_runtime-11b-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/ant/ant/1.9.7/ant-1.9.7-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>

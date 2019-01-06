@@ -1,0 +1,71 @@
+package it.unisa.visitor.semantic.scope;
+
+import it.unisa.ast.declaration.DeclarationNode;
+import it.unisa.ast.declaration.procedure.ProcedureDeclarationNode;
+import it.unisa.ast.declaration.procedure.parameter.ParDeclarationNode;
+import it.unisa.ast.declaration.variable.VarDeclarationNode;
+import it.unisa.ast.programma.ProgrammaNode;
+import it.unisa.ast.statement.StatementNode;
+import it.unisa.visitor.semantic.SemanticVisitor;
+
+import java.util.ArrayList;
+
+@SuppressWarnings("unchecked")
+public class ScopeCheckingVisitor extends SemanticVisitor {
+    private ScopeChecker scopeChecker;
+
+    public ScopeCheckingVisitor(SymbolTable symbolTable) {
+        scopeChecker = new ScopeChecker(symbolTable);
+    }
+
+    @Override
+    public Object visit(ProgrammaNode n) {
+        scopeChecker.scopeCheckAPreOrder(n);
+        ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
+        ArrayList<String> result = new ArrayList<>(subResult);
+        scopeChecker.scopeCheckAPostOrder();
+        return result;
+    }
+
+    @Override
+    public Object visit(DeclarationNode n) {
+        ArrayList<String> checkBResult = scopeChecker.scopeCheckB(n);
+        ArrayList<String> result = new ArrayList<>(checkBResult);
+
+        ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
+        result.addAll(subResult);
+        return result;
+    }
+
+    @Override
+    public Object visit(ProcedureDeclarationNode n) {
+        ArrayList<String> checkBResult = scopeChecker.scopeCheckB(n);
+        ArrayList<String> result = new ArrayList<>(checkBResult);
+
+        scopeChecker.scopeCheckAPreOrder(n);
+        ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
+        result.addAll(subResult);
+        scopeChecker.scopeCheckAPostOrder();
+        return result;
+    }
+
+    @Override
+    public Object visit(VarDeclarationNode n) {
+        return visit((DeclarationNode) n);
+    }
+
+    @Override
+    public Object visit(ParDeclarationNode n) {
+        return visit((DeclarationNode) n);
+    }
+
+    @Override
+    public Object visit(StatementNode n) {
+        ArrayList<String> checkCResult = scopeChecker.scopeCheckC(n);
+        ArrayList<String> result = new ArrayList<>(checkCResult);
+
+        ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
+        result.addAll(subResult);
+        return result;
+    }
+}
