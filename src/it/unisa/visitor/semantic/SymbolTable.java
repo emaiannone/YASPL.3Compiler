@@ -1,7 +1,5 @@
 package it.unisa.visitor.semantic;
 
-import it.unisa.visitor.semantic.scope.SemanticData;
-
 import java.util.Iterator;
 import java.util.Stack;
 

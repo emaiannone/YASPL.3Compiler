@@ -7,7 +7,7 @@ import it.unisa.ast.declaration.procedure.ProcedureDeclarationNode;
 import it.unisa.ast.declaration.procedure.parameter.ParDeclarationNode;
 import it.unisa.ast.declaration.variable.VarDeclarationNode;
 import it.unisa.ast.expression.ExpressionNode;
-import it.unisa.ast.expression.constant.ConstantNode;
+import it.unisa.ast.expression.constant.*;
 import it.unisa.ast.expression.identifier.IdentifierNode;
 import it.unisa.ast.initialization.VarInitNode;
 import it.unisa.ast.list.VarInitListNode;
@@ -105,6 +105,31 @@ abstract class IdentifierVisitor implements MyVisitor {
 
     @Override
     public Object visit(ConstantNode n) {
+        return null;
+    }
+
+    @Override
+    public Object visit(IntegerConstantNode n) {
+        return null;
+    }
+
+    @Override
+    public Object visit(DoubleConstantNode n) {
+        return null;
+    }
+
+    @Override
+    public Object visit(StringConstantNode n) {
+        return null;
+    }
+
+    @Override
+    public Object visit(CharConstantNode n) {
+        return null;
+    }
+
+    @Override
+    public Object visit(BoolConstantNode n) {
         return null;
     }
 }

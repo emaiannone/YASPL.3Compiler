@@ -7,7 +7,7 @@ import it.unisa.ast.declaration.procedure.ProcedureDeclarationNode;
 import it.unisa.ast.declaration.procedure.parameter.ParDeclarationNode;
 import it.unisa.ast.declaration.variable.VarDeclarationNode;
 import it.unisa.ast.expression.ExpressionNode;
-import it.unisa.ast.expression.constant.ConstantNode;
+import it.unisa.ast.expression.constant.*;
 import it.unisa.ast.expression.identifier.IdentifierNode;
 import it.unisa.ast.initialization.VarInitNode;
 import it.unisa.ast.list.VarInitListNode;
@@ -39,6 +39,16 @@ public interface MyVisitor {
     Object visit(ExpressionNode n);
 
     Object visit(ConstantNode n);
+
+    Object visit(IntegerConstantNode n);
+
+    Object visit(DoubleConstantNode n);
+
+    Object visit(StringConstantNode n);
+
+    Object visit(CharConstantNode n);
+
+    Object visit(BoolConstantNode n);
 
     Object visit(IdentifierNode n);
 }

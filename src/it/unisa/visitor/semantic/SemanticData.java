@@ -1,10 +1,6 @@
-package it.unisa.visitor.semantic.scope;
+package it.unisa.visitor.semantic;
 
 public class SemanticData {
-    public static final String PROCEDURE = "procedure";
-    public static final String VARIABLE = "variable";
-    public static final String PARAMETER = "parameter";
-
     private String identifier;
     private String kind;
 

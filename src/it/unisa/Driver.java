@@ -5,6 +5,7 @@ import it.unisa.lexer.Yylex;
 import it.unisa.parser.Parser;
 import it.unisa.parser.ParserSym;
 import it.unisa.visitor.semantic.scope.ScopeCheckingVisitor;
+import it.unisa.visitor.semantic.type.TypeCheckingVisitor;
 import it.unisa.visitor.xml.XMLMyVisitor;
 
 import java.io.FileNotFoundException;
@@ -18,32 +19,52 @@ import java.util.Collections;
 public class Driver {
     public static void main(String[] args) {
         //TODO Migliorare gestione errori del parser e dello scanning
+        ProgrammaNode root = null;
         try {
             System.out.println("\nParsing... ");
-            ProgrammaNode root = parse("programmaErroriScope.yaspl");
+            root = parse("programmaErroriScope.yaspl");
             System.out.println("Parsing successful!");
-            writeToFile("AST.xml", getXML(root));
-
-            System.out.println("\nStarting scope checking...");
-            ScopeCheckingVisitor scv = new ScopeCheckingVisitor();
-            ArrayList<String> errors = (ArrayList<String>) root.accept(scv);
-
-            if (errors.isEmpty()) {
-                System.out.println("Scope checking successful!");
-            } else {
-                System.out.println("Scope checking failed:");
-                errors.removeAll(Collections.singleton(null));  // Discards the null elements
-                for (String e : errors) {
-                    System.out.println('\t' + e);
-                }
-            }
-
-            //TODO Type checking
-
-        } catch (FileNotFoundException e) {
-            System.out.println("Writing to XML file error.");
         } catch (Exception e) {
             System.out.println("Parsing error.");
+        }
+        try {
+            if (root != null) {
+                writeToFile("AST.xml", getXML(root));
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Writing to XML file error.");
+        }
+        try {
+            if (root != null) {
+                System.out.println("\nStarting scope checking...");
+                ScopeCheckingVisitor scv = new ScopeCheckingVisitor();
+                ArrayList<String> scopeErrors = (ArrayList<String>) root.accept(scv);
+
+                if (scopeErrors.isEmpty()) {
+                    System.out.println("Scope checking successful!");
+                } else {
+                    System.out.println("Scope checking failed:");
+                    //scopeErrors.removeAll(Collections.singleton(null));  // Discards the null elements
+                    for (String e : scopeErrors) {
+                        System.out.println('\t' + e);
+                    }
+                }
+
+                System.out.println("\nStarting type checking...");
+                TypeCheckingVisitor tcv = new TypeCheckingVisitor();
+                ArrayList<String> typeErrors = (ArrayList<String>) root.accept(tcv);
+                if (typeErrors.isEmpty()) {
+                    System.out.println("Type checking successful!");
+                } else {
+                    System.out.println("Type checking failed:");
+                    for (String e : typeErrors) {
+                        System.out.println('\t' + e);
+                    }
+                }
+                //TODO
+            }
+        } catch (Exception e) {
+            System.out.println("Checking error.");
         }
     }
 

@@ -4,6 +4,7 @@ import it.unisa.ast.declaration.DeclarationNode;
 import it.unisa.ast.expression.identifier.IdentifierNode;
 import it.unisa.ast.statement.StatementNode;
 import it.unisa.visitor.semantic.SemanticChecker;
+import it.unisa.visitor.semantic.SemanticData;
 import it.unisa.visitor.semantic.scope.identifier.IdentifierDeclarationVisitor;
 import it.unisa.visitor.semantic.scope.identifier.IdentifierDefUseVisitor;
 
@@ -48,7 +49,7 @@ class ScopeChecker extends SemanticChecker {
                     if (getSymbolTable().probe(identifierName)) {
                         errors.add(MULTIPLE_DECLARATION + identifierName);
                     }
-                    SemanticData semanticData = new SemanticData(identifierName, SemanticData.PARAMETER);
+                    SemanticData semanticData = new SemanticData(identifierName, n.getKind());
                     getSymbolTable().getCurrentScope().getTable().put(identifierName, semanticData);
                 }
             }

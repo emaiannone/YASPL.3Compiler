@@ -7,7 +7,7 @@ import it.unisa.ast.declaration.procedure.ProcedureDeclarationNode;
 import it.unisa.ast.declaration.procedure.parameter.ParDeclarationNode;
 import it.unisa.ast.declaration.variable.VarDeclarationNode;
 import it.unisa.ast.expression.ExpressionNode;
-import it.unisa.ast.expression.constant.ConstantNode;
+import it.unisa.ast.expression.constant.*;
 import it.unisa.ast.expression.identifier.IdentifierNode;
 import it.unisa.ast.initialization.VarInitNode;
 import it.unisa.ast.list.VarInitListNode;
@@ -73,6 +73,26 @@ public class XMLMyVisitor implements MyVisitor {
         return xml.toString();
     }
 
+    @Override
+    public Object visit(IntegerConstantNode n) {
+        return visit((ConstantNode) n);
+    }
+
+    @Override
+    public Object visit(DoubleConstantNode n) {
+        return visit((ConstantNode) n);
+    }
+
+    @Override
+    public Object visit(StringConstantNode n) {
+        return visit((ConstantNode) n);
+    }
+
+    @Override
+    public Object visit(CharConstantNode n) {
+        return visit((ConstantNode) n);
+    }
+
     // Reuse the MyNode visit
     @Override
     public Object visit(ProgrammaNode n) {
@@ -121,6 +141,11 @@ public class XMLMyVisitor implements MyVisitor {
 
     @Override
     public Object visit(ExpressionNode n) {
+        return visit((MyNode) n);
+    }
+
+    @Override
+    public Object visit(BoolConstantNode n) {
         return visit((MyNode) n);
     }
 
