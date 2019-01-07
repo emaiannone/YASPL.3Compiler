@@ -1,4 +1,4 @@
-package it.unisa.ast.expression.arithmetic;
+package it.unisa.ast.expression.operation.arithmetic;
 
 public class TimesOpNode extends ArithOpNode {
     public String getXMLTag() {

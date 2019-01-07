@@ -9,6 +9,7 @@ import it.unisa.ast.declaration.variable.VarDeclarationNode;
 import it.unisa.ast.expression.ExpressionNode;
 import it.unisa.ast.expression.constant.*;
 import it.unisa.ast.expression.identifier.IdentifierNode;
+import it.unisa.ast.expression.operation.OpNode;
 import it.unisa.ast.initialization.VarInitNode;
 import it.unisa.ast.list.VarInitListNode;
 import it.unisa.ast.programma.ProgrammaNode;
@@ -42,9 +43,11 @@ public class XMLMyVisitor implements MyVisitor {
         StringBuilder xml = new StringBuilder();
         xml.append(openTag(n.getXMLTag()));
         // Removes the < in favor of &lt;
-        String wrongString = n.data().toString();
-        String correctString = wrongString.replaceAll("<", "&lt;");
-        xml.append(correctString);
+        if (n.data() != null) {
+            String wrongString = n.data().toString();
+            String correctString = wrongString.replaceAll("<", "&lt;");
+            xml.append(correctString);
+        }
 
         if (!n.subtrees().isEmpty()) {
             LinkedHashSet<MyNode> children = (LinkedHashSet<MyNode>) n.subtrees();
@@ -91,6 +94,11 @@ public class XMLMyVisitor implements MyVisitor {
 
     @Override
     public Object visit(CharConstantNode n) {
+        return visit((ConstantNode) n);
+    }
+
+    @Override
+    public Object visit(BoolConstantNode n) {
         return visit((ConstantNode) n);
     }
 
@@ -146,7 +154,7 @@ public class XMLMyVisitor implements MyVisitor {
     }
 
     @Override
-    public Object visit(BoolConstantNode n) {
+    public Object visit(OpNode n) {
         return visit((MyNode) n);
     }
 

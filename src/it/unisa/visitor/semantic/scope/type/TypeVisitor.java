@@ -9,11 +9,12 @@ import it.unisa.ast.declaration.variable.VarDeclarationNode;
 import it.unisa.ast.expression.ExpressionNode;
 import it.unisa.ast.expression.constant.*;
 import it.unisa.ast.expression.identifier.IdentifierNode;
+import it.unisa.ast.expression.operation.OpNode;
 import it.unisa.ast.initialization.VarInitNode;
 import it.unisa.ast.list.VarInitListNode;
 import it.unisa.ast.programma.ProgrammaNode;
 import it.unisa.ast.statement.StatementNode;
-import it.unisa.ast.type.*;
+import it.unisa.ast.type.TypeNode;
 import it.unisa.visitor.MyVisitor;
 
 import java.util.ArrayList;
@@ -131,6 +132,11 @@ public abstract class TypeVisitor implements MyVisitor {
 
     @Override
     public Object visit(BoolConstantNode n) {
+        return null;
+    }
+
+    @Override
+    public Object visit(OpNode n) {
         return null;
     }
 

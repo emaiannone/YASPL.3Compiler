@@ -4,6 +4,7 @@ import it.unisa.ast.declaration.procedure.ProcedureDeclarationNode;
 import it.unisa.ast.expression.ExpressionNode;
 import it.unisa.ast.expression.constant.*;
 import it.unisa.ast.expression.identifier.IdentifierNode;
+import it.unisa.ast.expression.operation.OpNode;
 import it.unisa.ast.programma.ProgrammaNode;
 import it.unisa.visitor.semantic.SemanticVisitor;
 
@@ -39,7 +40,8 @@ public class TypeCheckingVisitor extends SemanticVisitor {
 
     //TODO WIP
     @Override
-    public Object visit(ExpressionNode n) {
+    public Object visit(OpNode n) {
+        // It first goes to the inductive base to calculate the type of the inner-most operations
         ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
         ArrayList<String> typeCheckResult = typeChecker.checkType(n);
 
@@ -51,13 +53,13 @@ public class TypeCheckingVisitor extends SemanticVisitor {
     @Override
     public Object visit(IntegerConstantNode n) {
         typeChecker.assignType(n);
-        return visit((ExpressionNode) n);
+        return null;
     }
 
     @Override
     public Object visit(DoubleConstantNode n) {
         typeChecker.assignType(n);
-        return visit((ExpressionNode) n);
+        return null;
     }
 
     @Override
@@ -69,18 +71,18 @@ public class TypeCheckingVisitor extends SemanticVisitor {
     @Override
     public Object visit(CharConstantNode n) {
         typeChecker.assignType(n);
-        return visit((ExpressionNode) n);
+        return null;
     }
 
     @Override
     public Object visit(BoolConstantNode n) {
         typeChecker.assignType(n);
-        return visit((ExpressionNode) n);
+        return null;
     }
 
     @Override
     public Object visit(IdentifierNode n) {
         typeChecker.assignType(n);
-        return visit((ExpressionNode) n);
+        return null;
     }
 }

@@ -1,9 +1,10 @@
-package it.unisa.ast.expression.constant;
+package it.unisa.ast.expression.operation;
 
+import it.unisa.ast.expression.ExpressionNode;
 import it.unisa.visitor.MyVisitor;
 
-public abstract class BoolConstantNode extends ConstantNode {
-    public BoolConstantNode() {
+public abstract class OpNode extends ExpressionNode {
+    public OpNode() {
         super(null);
     }
 

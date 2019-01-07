@@ -9,6 +9,7 @@ import it.unisa.ast.declaration.variable.VarDeclarationNode;
 import it.unisa.ast.expression.ExpressionNode;
 import it.unisa.ast.expression.constant.*;
 import it.unisa.ast.expression.identifier.IdentifierNode;
+import it.unisa.ast.expression.operation.OpNode;
 import it.unisa.ast.initialization.VarInitNode;
 import it.unisa.ast.list.VarInitListNode;
 import it.unisa.ast.programma.ProgrammaNode;
@@ -52,6 +53,8 @@ public interface MyVisitor {
     Object visit(BoolConstantNode n);
 
     Object visit(IdentifierNode n);
+
+    Object visit(OpNode n);
 
     Object visit(TypeNode n);
 }
