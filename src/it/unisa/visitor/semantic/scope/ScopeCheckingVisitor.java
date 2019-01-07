@@ -14,22 +14,22 @@ import java.util.ArrayList;
 public class ScopeCheckingVisitor extends SemanticVisitor {
     private ScopeChecker scopeChecker;
 
-    public ScopeCheckingVisitor(SymbolTable symbolTable) {
-        scopeChecker = new ScopeChecker(symbolTable);
+    public ScopeCheckingVisitor() {
+        scopeChecker = new ScopeChecker();
     }
 
     @Override
     public Object visit(ProgrammaNode n) {
-        scopeChecker.scopeCheckAPreOrder(n);
+        scopeChecker.startScope(n);
         ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
         ArrayList<String> result = new ArrayList<>(subResult);
-        scopeChecker.scopeCheckAPostOrder();
+        scopeChecker.endCurrentScope();
         return result;
     }
 
     @Override
     public Object visit(DeclarationNode n) {
-        ArrayList<String> checkBResult = scopeChecker.scopeCheckB(n);
+        ArrayList<String> checkBResult = scopeChecker.checkMultipleDeclarations(n);
         ArrayList<String> result = new ArrayList<>(checkBResult);
 
         ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
@@ -39,13 +39,13 @@ public class ScopeCheckingVisitor extends SemanticVisitor {
 
     @Override
     public Object visit(ProcedureDeclarationNode n) {
-        ArrayList<String> checkBResult = scopeChecker.scopeCheckB(n);
+        ArrayList<String> checkBResult = scopeChecker.checkMultipleDeclarations(n);
         ArrayList<String> result = new ArrayList<>(checkBResult);
 
-        scopeChecker.scopeCheckAPreOrder(n);
+        scopeChecker.startScope(n);
         ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
         result.addAll(subResult);
-        scopeChecker.scopeCheckAPostOrder();
+        scopeChecker.endCurrentScope();
         return result;
     }
 
@@ -61,7 +61,7 @@ public class ScopeCheckingVisitor extends SemanticVisitor {
 
     @Override
     public Object visit(StatementNode n) {
-        ArrayList<String> checkCResult = scopeChecker.scopeCheckC(n);
+        ArrayList<String> checkCResult = scopeChecker.checkUndeclarations(n);
         ArrayList<String> result = new ArrayList<>(checkCResult);
 
         ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);

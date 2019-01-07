@@ -5,7 +5,6 @@ import it.unisa.lexer.Yylex;
 import it.unisa.parser.Parser;
 import it.unisa.parser.ParserSym;
 import it.unisa.visitor.semantic.scope.ScopeCheckingVisitor;
-import it.unisa.visitor.semantic.scope.SymbolTable;
 import it.unisa.visitor.xml.XMLMyVisitor;
 
 import java.io.FileNotFoundException;
@@ -26,9 +25,9 @@ public class Driver {
             writeToFile("AST.xml", getXML(root));
 
             System.out.println("\nStarting scope checking...");
-            SymbolTable symbolTable = new SymbolTable();
-            ScopeCheckingVisitor scv = new ScopeCheckingVisitor(symbolTable);
+            ScopeCheckingVisitor scv = new ScopeCheckingVisitor();
             ArrayList<String> errors = (ArrayList<String>) root.accept(scv);
+
             if (errors.isEmpty()) {
                 System.out.println("Scope checking successful!");
             } else {

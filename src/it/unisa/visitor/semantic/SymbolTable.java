@@ -1,4 +1,6 @@
-package it.unisa.visitor.semantic.scope;
+package it.unisa.visitor.semantic;
+
+import it.unisa.visitor.semantic.scope.SemanticData;
 
 import java.util.Iterator;
 import java.util.Stack;
@@ -10,15 +12,15 @@ public class SymbolTable {
         stack = new Stack<>();
     }
 
-    ScopeTable push(ScopeTable st) {
+    public ScopeTable push(ScopeTable st) {
         return stack.push(st);
     }
 
-    ScopeTable pop() {
+    public ScopeTable pop() {
         return stack.pop();
     }
 
-    ScopeTable getCurrentScope() {
+    public ScopeTable getCurrentScope() {
         return stack.peek();
     }
 
@@ -28,7 +30,7 @@ public class SymbolTable {
      * @param key
      * @return
      */
-    boolean probe(String key) {
+    public boolean probe(String key) {
         ScopeTable s = stack.peek();
         return s.getTable().get(key) != null;
     }
@@ -39,7 +41,7 @@ public class SymbolTable {
      * @param key
      * @return
      */
-    SemanticData lookup(String key) {
+    public SemanticData lookup(String key) {
         SemanticData data = null;
         Iterator<ScopeTable> iterator = stack.iterator();
         while (iterator.hasNext() && data == null) {
@@ -49,7 +51,7 @@ public class SymbolTable {
         return data;
     }
 
-    boolean empty() {
+    public boolean empty() {
         return stack.empty();
     }
 }

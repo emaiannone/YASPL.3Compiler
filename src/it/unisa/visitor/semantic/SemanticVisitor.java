@@ -20,7 +20,7 @@ import java.util.LinkedHashSet;
 
 @SuppressWarnings("unchecked")
 public abstract class SemanticVisitor implements MyVisitor {
-    
+
     /**
      * Helper method to iterate the visit on all children
      *

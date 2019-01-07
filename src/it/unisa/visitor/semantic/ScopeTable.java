@@ -1,4 +1,6 @@
-package it.unisa.visitor.semantic.scope;
+package it.unisa.visitor.semantic;
+
+import it.unisa.visitor.semantic.scope.SemanticData;
 
 import java.util.HashMap;
 
