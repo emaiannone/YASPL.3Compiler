@@ -137,30 +137,4 @@ public abstract class SemanticVisitor implements MyVisitor {
         return visitSubtree(n);
     }
 
-    /*
-    @Override
-    public Object visit(IntegerNode n) {
-        return visitSubtree(n);
-    }
-
-    @Override
-    public Object visit(DoubleNode n) {
-        return visitSubtree(n);
-    }
-
-    @Override
-    public Object visit(StringNode n) {
-        return visitSubtree(n);
-    }
-
-    @Override
-    public Object visit(CharacterNode n) {
-        return visitSubtree(n);
-    }
-
-    @Override
-    public Object visit(BooleanNode n) {
-        return visitSubtree(n);
-    }
-*/
 }

@@ -22,17 +22,17 @@ public class ScopeCheckingVisitor extends SemanticVisitor {
     public Object visit(ProgrammaNode n) {
         scopeChecker.startScope(n);
         ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
-        ArrayList<String> result = new ArrayList<>(subResult);
         scopeChecker.endCurrentScope();
-        return result;
+
+        return new ArrayList<>(subResult);
     }
 
     @Override
     public Object visit(DeclarationNode n) {
         ArrayList<String> checkBResult = scopeChecker.checkMultipleDeclarations(n);
-        ArrayList<String> result = new ArrayList<>(checkBResult);
-
         ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
+
+        ArrayList<String> result = new ArrayList<>(checkBResult);
         result.addAll(subResult);
         return result;
     }
@@ -40,12 +40,12 @@ public class ScopeCheckingVisitor extends SemanticVisitor {
     @Override
     public Object visit(ProcedureDeclarationNode n) {
         ArrayList<String> checkBResult = scopeChecker.checkMultipleDeclarations(n);
-        ArrayList<String> result = new ArrayList<>(checkBResult);
-
         scopeChecker.startScope(n);
         ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
-        result.addAll(subResult);
         scopeChecker.endCurrentScope();
+
+        ArrayList<String> result = new ArrayList<>(checkBResult);
+        result.addAll(subResult);
         return result;
     }
 

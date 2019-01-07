@@ -54,14 +54,4 @@ public interface MyVisitor {
     Object visit(IdentifierNode n);
 
     Object visit(TypeNode n);
-/*
-    Object visit(IntegerNode n);
-
-    Object visit(DoubleNode n);
-
-    Object visit(StringNode n);
-
-    Object visit(CharacterNode n);
-
-    Object visit(BooleanNode n);*/
 }

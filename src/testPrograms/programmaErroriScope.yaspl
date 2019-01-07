@@ -8,7 +8,7 @@ head
 
         sharedParameter = 2;
         nonVariable1 = 10;
-        nonVariable2 = nonVariable2 + nonVariable3;
+        nonVariable2 = nonVariable2 + nonVariable3 + nonVariable5;
         nonVariable4 <-;
         nonProcedure(nonParameter1, nonParameter2);
         nonOut ->;

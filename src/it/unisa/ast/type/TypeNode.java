@@ -4,6 +4,7 @@ import it.unisa.ast.MyNode;
 import it.unisa.visitor.MyVisitor;
 
 public abstract class TypeNode extends MyNode {
+    public static final String VOID = "void";
     private String type;
 
     public TypeNode(String type) {

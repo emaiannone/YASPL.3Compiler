@@ -9,7 +9,6 @@ import it.unisa.visitor.semantic.SemanticData;
 import it.unisa.visitor.semantic.scope.identifier.IdentifierDeclarationVisitor;
 import it.unisa.visitor.semantic.scope.identifier.IdentifierDefUseVisitor;
 import it.unisa.visitor.semantic.scope.type.TypeDeclarationVisitor;
-import it.unisa.visitor.semantic.scope.type.TypeVisitor;
 
 import java.util.ArrayList;
 
@@ -61,6 +60,8 @@ class ScopeChecker extends SemanticChecker {
                         if (types != null && !types.isEmpty()) {
                             TypeNode typeNode = types.get(0);
                             semanticData.setType(typeNode.getType());
+                        } else {
+                            semanticData.setType(TypeNode.VOID);
                         }
                         getSymbolTable().getCurrentScope().getTable().put(identifierName, semanticData);
                     }
