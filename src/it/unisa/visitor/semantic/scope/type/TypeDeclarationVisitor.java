@@ -1,13 +1,10 @@
-package it.unisa.visitor.semantic.scope.identifier;
+package it.unisa.visitor.semantic.scope.type;
 
 import it.unisa.ast.declaration.procedure.ProcedureDeclarationNode;
 import it.unisa.ast.declaration.procedure.parameter.ParDeclarationNode;
 import it.unisa.ast.declaration.variable.VarDeclarationNode;
-import it.unisa.ast.initialization.VarInitNode;
-import it.unisa.ast.list.VarInitListNode;
 
-public class IdentifierDeclarationVisitor extends IdentifierVisitor {
-
+public class TypeDeclarationVisitor extends TypeVisitor {
     @Override
     public Object visit(ProcedureDeclarationNode n) {
         return visitSubtree(n);
@@ -23,13 +20,4 @@ public class IdentifierDeclarationVisitor extends IdentifierVisitor {
         return visitSubtree(n);
     }
 
-    @Override
-    public Object visit(VarInitListNode n) {
-        return visitSubtree(n);
-    }
-
-    @Override
-    public Object visit(VarInitNode n) {
-        return visitSubtree(n);
-    }
 }

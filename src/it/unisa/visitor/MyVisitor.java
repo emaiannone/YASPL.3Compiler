@@ -13,6 +13,7 @@ import it.unisa.ast.initialization.VarInitNode;
 import it.unisa.ast.list.VarInitListNode;
 import it.unisa.ast.programma.ProgrammaNode;
 import it.unisa.ast.statement.StatementNode;
+import it.unisa.ast.type.*;
 
 // Interface for the visitor that is able to visit the tree of concrete MyNode(s)
 public interface MyVisitor {
@@ -51,4 +52,16 @@ public interface MyVisitor {
     Object visit(BoolConstantNode n);
 
     Object visit(IdentifierNode n);
+
+    Object visit(TypeNode n);
+/*
+    Object visit(IntegerNode n);
+
+    Object visit(DoubleNode n);
+
+    Object visit(StringNode n);
+
+    Object visit(CharacterNode n);
+
+    Object visit(BooleanNode n);*/
 }

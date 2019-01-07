@@ -1,6 +1,7 @@
 package it.unisa.visitor.semantic.type;
 
 import it.unisa.ast.expression.constant.*;
+import it.unisa.ast.type.*;
 import it.unisa.visitor.semantic.SemanticChecker;
 
 /*
@@ -18,38 +19,41 @@ Type Check E.
  */
 
 public class TypeChecker extends SemanticChecker {
-    private static final String INTEGER = "int";
-    private static final String DOUBLE = "double";
-    private static final String STRING = "string";
-    private static final String CHAR = "char";
-    private static final String BOOL = "bool";
 
     //Type Check D
     public void setType(IntegerConstantNode n) {
-        n.setType(INTEGER);
+        n.setType(IntegerNode.INTEGER);
     }
 
     //Type Check D
     public void setType(DoubleConstantNode n) {
-        n.setType(DOUBLE);
+        n.setType(DoubleNode.DOUBLE);
     }
 
     //Type Check D
     public void setType(StringConstantNode n) {
-        n.setType(STRING);
+        n.setType(StringNode.STRING);
     }
 
     //Type Check D
     public void setType(CharConstantNode n) {
-        n.setType(CHAR);
+        n.setType(CharacterNode.CHARACTER);
     }
 
     //Type Check D
     public void setType(BoolConstantNode n) {
-        n.setType(BOOL);
+        n.setType(BooleanNode.BOOLEAN);
     }
 
     //TODO Type Check dei nodi espressione e nodi statement (che si avvalgono della symbol table)
-        //TODO All'entrata di uno scope (ProgrammaNode e ProcedureDeclarationNode) attivare/disattivare il relativo scope
-        //TODO Usare lookup per ottenere il tipo di dato (che deve starci memorizzato nella tabella dei simboli per recupero veloce)
+        //1. Viene lanciato il visitatore
+        //2. All'entrata di uno scope (ProgrammaNode e ProcedureDeclarationNode) e attivare il relativo scope
+        //3. Visitare i figli
+        //4. Se si trova un nodo ExpressionNode, lanciare typeCheck() passandogli tutta la tabella dei simboli attuale
+            //4.1 Il typeCheck() recupera tutte le sotto espressioni
+            //4.2 Recupera i tipi dei nodi costanti col loro getType()
+            //4.3 Recupera i tipi dei nodi identificatori con la lookup() della tabella dei simboli
+            //4.4 Segue le regole del Type System per verificare la correttezza
+        //TODO 5. Se si trova un nodo StatementNode, lanciare typeCheck() passandogli tutta la tabella dei simboli attuale
+        //6. Disattivare lo scope all'uscita
 }

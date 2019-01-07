@@ -3,10 +3,10 @@ package it.unisa.visitor.semantic;
 public class SemanticData {
     private String identifier;
     private String kind;
+    private String type;
 
-    public SemanticData(String identifier, String kind) {
-        this.identifier = identifier;
-        this.kind = kind;
+    public SemanticData() {
+
     }
 
     public String getIdentifier() {
@@ -23,6 +23,14 @@ public class SemanticData {
 
     public void setKind(String kind) {
         this.kind = kind;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Override

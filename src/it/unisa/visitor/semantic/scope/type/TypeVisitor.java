@@ -1,4 +1,4 @@
-package it.unisa.visitor.semantic;
+package it.unisa.visitor.semantic.scope.type;
 
 import it.unisa.ast.MyNode;
 import it.unisa.ast.args.ArgsNode;
@@ -20,20 +20,20 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 @SuppressWarnings("unchecked")
-public abstract class SemanticVisitor implements MyVisitor {
+public abstract class TypeVisitor implements MyVisitor {
 
     /**
      * Helper method to iterate the visit on all children
      *
      * @param n
-     * @return An ArrayList of String containing the error messages
+     * @return
      */
-    protected Object visitSubtree(MyNode n) {
-        ArrayList<String> result = new ArrayList<>();
+    Object visitSubtree(MyNode n) {
+        ArrayList<TypeNode> result = new ArrayList<>();
         if (!n.subtrees().isEmpty()) {
             LinkedHashSet<MyNode> children = (LinkedHashSet<MyNode>) n.subtrees();
             for (MyNode c : children) {
-                ArrayList<String> subResult = (ArrayList<String>) c.accept(this);
+                ArrayList<TypeNode> subResult = (ArrayList<TypeNode>) c.accept(this);
                 if (subResult != null) {
                     result.addAll(subResult);
                 }
@@ -43,124 +43,99 @@ public abstract class SemanticVisitor implements MyVisitor {
     }
 
     @Override
+    public Object visit(TypeNode n) {
+        ArrayList<TypeNode> typeNodes = new ArrayList<>();
+        typeNodes.add(n);
+        return typeNodes;
+    }
+
+    @Override
     public Object visit(MyNode n) {
-        return visitSubtree(n);
+        return null;
     }
 
     @Override
     public Object visit(ProgrammaNode n) {
-        return visitSubtree(n);
+        return null;
     }
 
     @Override
     public Object visit(DeclarationNode n) {
-        return visitSubtree(n);
+        return null;
     }
 
     @Override
     public Object visit(ProcedureDeclarationNode n) {
-        return visitSubtree(n);
+        return null;
     }
 
     @Override
     public Object visit(VarDeclarationNode n) {
-        return visitSubtree(n);
+        return null;
     }
 
     @Override
     public Object visit(ParDeclarationNode n) {
-        return visitSubtree(n);
+        return null;
     }
 
     @Override
     public Object visit(VarInitListNode n) {
-        return visitSubtree(n);
+        return null;
     }
 
     @Override
     public Object visit(VarInitNode n) {
-        return visitSubtree(n);
+        return null;
     }
 
     @Override
     public Object visit(StatementNode n) {
-        return visitSubtree(n);
+        return null;
     }
 
     @Override
     public Object visit(ArgsNode n) {
-        return visitSubtree(n);
+        return null;
     }
 
     @Override
     public Object visit(ExpressionNode n) {
-        return visitSubtree(n);
+        return null;
     }
 
     @Override
     public Object visit(ConstantNode n) {
-        return visitSubtree(n);
+        return null;
     }
 
     @Override
     public Object visit(IntegerConstantNode n) {
-        return visitSubtree(n);
+        return null;
     }
 
     @Override
     public Object visit(DoubleConstantNode n) {
-        return visitSubtree(n);
+        return null;
     }
 
     @Override
     public Object visit(StringConstantNode n) {
-        return visitSubtree(n);
+        return null;
     }
 
     @Override
     public Object visit(CharConstantNode n) {
-        return visitSubtree(n);
+        return null;
     }
 
     @Override
     public Object visit(BoolConstantNode n) {
-        return visitSubtree(n);
+        return null;
     }
 
     @Override
     public Object visit(IdentifierNode n) {
-        return visitSubtree(n);
+        return null;
     }
-
-    @Override
-    public Object visit(TypeNode n) {
-        return visitSubtree(n);
-    }
-
-    /*
-    @Override
-    public Object visit(IntegerNode n) {
-        return visitSubtree(n);
-    }
-
-    @Override
-    public Object visit(DoubleNode n) {
-        return visitSubtree(n);
-    }
-
-    @Override
-    public Object visit(StringNode n) {
-        return visitSubtree(n);
-    }
-
-    @Override
-    public Object visit(CharacterNode n) {
-        return visitSubtree(n);
-    }
-
-    @Override
-    public Object visit(BooleanNode n) {
-        return visitSubtree(n);
-    }
-*/
 }

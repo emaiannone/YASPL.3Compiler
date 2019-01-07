@@ -13,6 +13,7 @@ import it.unisa.ast.initialization.VarInitNode;
 import it.unisa.ast.list.VarInitListNode;
 import it.unisa.ast.programma.ProgrammaNode;
 import it.unisa.ast.statement.StatementNode;
+import it.unisa.ast.type.TypeNode;
 import it.unisa.visitor.MyVisitor;
 
 import java.util.LinkedHashSet;
@@ -146,6 +147,11 @@ public class XMLMyVisitor implements MyVisitor {
 
     @Override
     public Object visit(BoolConstantNode n) {
+        return visit((MyNode) n);
+    }
+
+    @Override
+    public Object visit(TypeNode n) {
         return visit((MyNode) n);
     }
 

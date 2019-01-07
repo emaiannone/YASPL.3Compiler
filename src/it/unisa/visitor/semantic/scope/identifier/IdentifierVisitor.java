@@ -13,13 +13,14 @@ import it.unisa.ast.initialization.VarInitNode;
 import it.unisa.ast.list.VarInitListNode;
 import it.unisa.ast.programma.ProgrammaNode;
 import it.unisa.ast.statement.StatementNode;
+import it.unisa.ast.type.TypeNode;
 import it.unisa.visitor.MyVisitor;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 @SuppressWarnings("unchecked")
-abstract class IdentifierVisitor implements MyVisitor {
+public abstract class IdentifierVisitor implements MyVisitor {
 
     /**
      * Helper method to iterate the visit on all children
@@ -130,6 +131,11 @@ abstract class IdentifierVisitor implements MyVisitor {
 
     @Override
     public Object visit(BoolConstantNode n) {
+        return null;
+    }
+
+    @Override
+    public Object visit(TypeNode n) {
         return null;
     }
 }
