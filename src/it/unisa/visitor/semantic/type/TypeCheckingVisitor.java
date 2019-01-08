@@ -1,13 +1,13 @@
 package it.unisa.visitor.semantic.type;
 
 import it.unisa.ast.declaration.procedure.ProcedureDeclarationNode;
-import it.unisa.ast.expression.ExpressionNode;
 import it.unisa.ast.expression.constant.*;
 import it.unisa.ast.expression.identifier.IdentifierNode;
-import it.unisa.ast.expression.operation.OpNode;
+import it.unisa.ast.expression.operation.arithmetic.PlusOpNode;
 import it.unisa.ast.programma.ProgrammaNode;
 import it.unisa.visitor.semantic.SemanticVisitor;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 @SuppressWarnings("unchecked")
@@ -38,17 +38,20 @@ public class TypeCheckingVisitor extends SemanticVisitor {
         return new ArrayList<>(subResult);
     }
 
-    //TODO WIP
     @Override
-    public Object visit(OpNode n) {
+    public Object visit(PlusOpNode n) {
         // It first goes to the inductive base to calculate the type of the inner-most operations
         ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
-        ArrayList<String> typeCheckResult = typeChecker.checkType(n);
+        String typeCheckResult = typeChecker.checkType(n, TypeSystem.PLUS_TABLE);
 
         ArrayList<String> result = new ArrayList<>(subResult);
-        result.addAll(typeCheckResult);
+        if (typeCheckResult != null && !typeCheckResult.equals("")) {
+            result.add(typeCheckResult);
+        }
         return result;
     }
+
+    //TODO Altre visite una per tabella di tipo
 
     @Override
     public Object visit(IntegerConstantNode n) {

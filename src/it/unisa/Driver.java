@@ -42,6 +42,9 @@ public class Driver {
 
                 if (scopeErrors.isEmpty()) {
                     System.out.println("Scope checking successful!");
+
+                    //TODO Move TypeChecking code here
+
                 } else {
                     System.out.println("Scope checking failed:");
                     //scopeErrors.removeAll(Collections.singleton(null));  // Discards the null elements
@@ -61,7 +64,6 @@ public class Driver {
                         System.out.println('\t' + e);
                     }
                 }
-                //TODO
             }
         } catch (Exception e) {
             System.out.println("Checking error.");

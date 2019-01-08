@@ -10,11 +10,12 @@ import it.unisa.ast.expression.ExpressionNode;
 import it.unisa.ast.expression.constant.*;
 import it.unisa.ast.expression.identifier.IdentifierNode;
 import it.unisa.ast.expression.operation.OpNode;
+import it.unisa.ast.expression.operation.arithmetic.PlusOpNode;
 import it.unisa.ast.initialization.VarInitNode;
 import it.unisa.ast.list.VarInitListNode;
 import it.unisa.ast.programma.ProgrammaNode;
 import it.unisa.ast.statement.StatementNode;
-import it.unisa.ast.type.*;
+import it.unisa.ast.type.TypeNode;
 
 // Interface for the visitor that is able to visit the tree of concrete MyNode(s)
 public interface MyVisitor {
@@ -55,6 +56,8 @@ public interface MyVisitor {
     Object visit(IdentifierNode n);
 
     Object visit(OpNode n);
+
+    Object visit(PlusOpNode n);
 
     Object visit(TypeNode n);
 }
