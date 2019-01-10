@@ -1,9 +1,8 @@
 package it.unisa.semantic.typing;
 
-import it.unisa.ast.expression.ExpressionNode;
+import it.unisa.ast.ExpressionStatementNode;
 import it.unisa.ast.expression.constant.*;
 import it.unisa.ast.expression.identifier.IdentifierNode;
-import it.unisa.ast.expression.operation.OpNode;
 import it.unisa.ast.type.*;
 import it.unisa.semantic.SemanticChecker;
 import it.unisa.semantic.SemanticData;
@@ -23,10 +22,9 @@ Type Check E.
     tabella dei simboli, solo il nodo dell'albero viene aggiornato con il tipo]
  */
 
-@SuppressWarnings("unchecked")
 public class TypeChecker extends SemanticChecker {
     public static final String TYPE_MISMATCH_EXPRESSION = "Type mismatch: ";
-    public static final String NO_TYPE = "Cannot apply type checking on identifiers without a declared type";
+    public static final String NO_TYPE = "Cannot apply type checking on nodes without a type";
 
     //Type Check D
     public void assignType(IntegerConstantNode n) {
@@ -65,28 +63,32 @@ public class TypeChecker extends SemanticChecker {
     }
 
     // TODO Improve code quality
-    // Partial Type Check E
-    public String assignType(OpNode n, int[][] typeTable) {
+    // TODO Farsi passare dal visitor una stringa riportante il nome dell'operazione/statement?
+    // Partial Type Check E. It checks the two children types or the first child type, according to the number of children
+    public String assignType(ExpressionStatementNode n, int[][] typeTable) {
         String error = null;
 
         //TODO Remove
         System.out.println(n);
 
-        ExpressionNode firstChild = (ExpressionNode) n.getChild(0);
+        ExpressionStatementNode firstChild = (ExpressionStatementNode) n.getChild(0);
         String firstType = firstChild.getType();
         String secondType = null;
         if (firstType == null) {
+            //TODO Remove
+            System.out.println("Error: " + NO_TYPE);
             return NO_TYPE;
         } else {
             int row = TypeSystem.stringToInt(firstType);
             int entry;
             String type;
 
-            ExpressionNode secondChild = (ExpressionNode) n.getChild(1);
+            ExpressionStatementNode secondChild = (ExpressionStatementNode) n.getChild(1);
             if (secondChild != null) {
                 // Binary Operations
                 secondType = secondChild.getType();
                 if (secondType == null) {
+                    System.out.println(NO_TYPE);
                     return NO_TYPE;
                 } else {
                     int column = TypeSystem.stringToInt(secondType);
@@ -97,74 +99,21 @@ public class TypeChecker extends SemanticChecker {
                 entry = typeTable[row][0];
             }
             type = TypeSystem.intToString(entry);
-            if (type != null) {
-                n.setType(type);
-                //TODO Remove
-                System.out.println("Set Type: " + type);
-            } else {
+            n.setType(type);
+            //TODO Remove
+            System.out.println("Type set: " + type);
+            if (type == null) {
                 if (secondType != null) {
                     error = TYPE_MISMATCH_EXPRESSION + firstType + " and " + secondType + " are incompatible with this operation";
                 } else {
                     error = TYPE_MISMATCH_EXPRESSION + firstType + " is incompatible with this operation";
                 }
                 //TODO Remove
-                System.out.println("Error: " + error);
+                System.out.println(error);
             }
         }
         return error;
     }
-
-    /*
-    // Type Check E for ArithOpNode
-    public String assignType(ArithOpNode n) {
-        String error = null;
-
-        System.out.println(n);
-        ExpressionNode firstChild = (ExpressionNode) n.getChild(0);
-        ExpressionNode secondChild = (ExpressionNode) n.getChild(1);
-        String firstType = firstChild.getType();
-        String secondType = secondChild.getType();
-        if (firstType.equals("") || secondType.equals("")) {
-            error = NO_TYPE;
-            System.out.println("Non riuscito: " + error);
-        } else {
-            String type = typeSystem.checkArithTable(firstType, secondType);
-            if (type != null && !type.equals("")) {
-                n.setType(type);
-                System.out.println("Riuscito: " + type);
-            } else {
-                error = TYPE_MISMATCH_EXPRESSION + firstType + " and " + secondType + " are incompatible with this operation";
-                System.out.println("Non riuscito: " + error);
-            }
-        }
-        return error;
-    }
-
-    // Type Check E for ArithOpNode
-    public String assignType(BoolOpNode n) {
-        String error = null;
-
-        System.out.println(n);
-        ExpressionNode firstChild = (ExpressionNode) n.getChild(0);
-        ExpressionNode secondChild = (ExpressionNode) n.getChild(1);
-        String firstType = firstChild.getType();
-        String secondType = secondChild.getType();
-        if (firstType.equals("") || secondType.equals("")) {
-            error = NO_TYPE;
-            System.out.println("Non riuscito: " + error);
-        } else {
-            String type = typeSystem.checkBoolTable(firstType, secondType);
-            if (type != null && !type.equals("")) {
-                n.setType(type);
-                System.out.println("Riuscito: " + type);
-            } else {
-                error = TYPE_MISMATCH_EXPRESSION + firstType + " and " + secondType + " are incompatible with this operation";
-                System.out.println("Non riuscito: " + error);
-            }
-        }
-        return error;
-    }
-    */
 
     //1. Viene lanciato il visitatore
     //2. All'entrata di uno scope (ProgrammaNode e ProcedureDeclarationNode) e attivare il relativo scope

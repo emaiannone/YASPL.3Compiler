@@ -1,9 +1,10 @@
 package it.unisa.ast.statement;
 
-import it.unisa.ast.MyNode;
+import it.unisa.ast.ExpressionStatementNode;
 import it.unisa.visitor.MyVisitor;
 
-public abstract class StatementNode extends MyNode {
+public abstract class StatementNode extends ExpressionStatementNode {
+
     public StatementNode() {
         super(null);
     }

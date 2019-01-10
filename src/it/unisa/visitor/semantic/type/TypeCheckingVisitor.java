@@ -1,16 +1,16 @@
 package it.unisa.visitor.semantic.type;
 
+import it.unisa.ast.ExpressionStatementNode;
 import it.unisa.ast.declaration.procedure.ProcedureDeclarationNode;
 import it.unisa.ast.expression.constant.*;
 import it.unisa.ast.expression.identifier.IdentifierNode;
-import it.unisa.ast.expression.operation.OpNode;
 import it.unisa.ast.expression.operation.arithmetic.ArithOpNode;
 import it.unisa.ast.expression.operation.bool.BoolOpNode;
 import it.unisa.ast.expression.operation.relational.RelOpNode;
 import it.unisa.ast.expression.operation.unary.NotOpNode;
 import it.unisa.ast.expression.operation.unary.UminusOpNode;
-import it.unisa.ast.expression.operation.unary.UnaryOpNode;
 import it.unisa.ast.programma.ProgrammaNode;
+import it.unisa.ast.statement.AssignOpNode;
 import it.unisa.semantic.typing.TypeChecker;
 import it.unisa.semantic.typing.TypeSystem;
 import it.unisa.visitor.semantic.SemanticVisitor;
@@ -25,7 +25,7 @@ public class TypeCheckingVisitor extends SemanticVisitor {
         typeChecker = new TypeChecker();
     }
 
-    private ArrayList<String> assignType(OpNode n, int[][] typeTable) {
+    private ArrayList<String> assignType(ExpressionStatementNode n, int[][] typeTable) {
         // It first goes to the inductive base to calculate the type of the inner-most operations
         ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
         String typeCheckResult = typeChecker.assignType(n, typeTable);
@@ -80,7 +80,13 @@ public class TypeCheckingVisitor extends SemanticVisitor {
         return assignType(n, TypeSystem.notTable);
     }
 
-    //TODO Altre visite, una per classe di nodi che condividono una stessa tabella
+    @Override
+    public Object visit(AssignOpNode n) {
+        return assignType(n, TypeSystem.assignTable);
+    }
+
+    //TODO Come si gestiscono gli altri nodi statement che hanno più di un figlio ma solo del primo si consulta il tipo?
+    //TODO Conviene allora che AssignOP condivida il check con le espressioni?
 
     //TODO visite sui nodi Statement
 

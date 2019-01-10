@@ -17,6 +17,7 @@ public class TypeSystem {
     public static final int[][] relationalTable = initRelationalTable();
     public static final int[][] uminusTable = initUminusTable();
     public static final int[][] notTable = initNotTable();
+    public static final int[][] assignTable = initAssignTable();
 
     //TODO Le altre tabelle
 
@@ -226,5 +227,53 @@ public class TypeSystem {
         notTable[BOOLEAN][0] = BOOLEAN;
 
         return notTable;
+    }
+
+    private static int[][] initAssignTable() {
+        int[][] assignTable = new int[6][6];
+
+        assignTable[VOID][VOID] = ERROR;
+        assignTable[VOID][INTEGER] = ERROR;
+        assignTable[VOID][DOUBLE] = ERROR;
+        assignTable[VOID][STRING] = ERROR;
+        assignTable[VOID][CHARACTER] = ERROR;
+        assignTable[VOID][BOOLEAN] = ERROR;
+
+        assignTable[INTEGER][VOID] = ERROR;
+        assignTable[INTEGER][INTEGER] = VOID;
+        assignTable[INTEGER][DOUBLE] = ERROR;
+        assignTable[INTEGER][STRING] = ERROR;
+        assignTable[INTEGER][CHARACTER] = ERROR;
+        assignTable[INTEGER][BOOLEAN] = ERROR;
+
+        assignTable[DOUBLE][VOID] = ERROR;
+        assignTable[DOUBLE][INTEGER] = VOID;
+        assignTable[DOUBLE][DOUBLE] = VOID;
+        assignTable[DOUBLE][STRING] = ERROR;
+        assignTable[DOUBLE][CHARACTER] = ERROR;
+        assignTable[DOUBLE][BOOLEAN] = ERROR;
+
+        assignTable[STRING][VOID] = ERROR;
+        assignTable[STRING][INTEGER] = ERROR;
+        assignTable[STRING][DOUBLE] = ERROR;
+        assignTable[STRING][STRING] = VOID;
+        assignTable[STRING][CHARACTER] = ERROR;
+        assignTable[STRING][BOOLEAN] = ERROR;
+
+        assignTable[CHARACTER][VOID] = ERROR;
+        assignTable[CHARACTER][INTEGER] = ERROR;
+        assignTable[CHARACTER][DOUBLE] = ERROR;
+        assignTable[CHARACTER][STRING] = ERROR;
+        assignTable[CHARACTER][CHARACTER] = VOID;
+        assignTable[CHARACTER][BOOLEAN] = ERROR;
+
+        assignTable[BOOLEAN][VOID] = ERROR;
+        assignTable[BOOLEAN][INTEGER] = ERROR;
+        assignTable[BOOLEAN][DOUBLE] = ERROR;
+        assignTable[BOOLEAN][STRING] = ERROR;
+        assignTable[BOOLEAN][CHARACTER] = ERROR;
+        assignTable[BOOLEAN][BOOLEAN] = VOID;
+
+        return assignTable;
     }
 }
