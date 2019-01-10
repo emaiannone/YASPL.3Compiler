@@ -1,4 +1,4 @@
-package it.unisa.visitor.semantic;
+package it.unisa.semantic;
 
 public class SemanticData {
     private String identifier;

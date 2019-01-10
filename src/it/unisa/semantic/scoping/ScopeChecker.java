@@ -1,11 +1,11 @@
-package it.unisa.visitor.semantic.scope;
+package it.unisa.semantic.scoping;
 
 import it.unisa.ast.declaration.DeclarationNode;
 import it.unisa.ast.expression.identifier.IdentifierNode;
 import it.unisa.ast.statement.StatementNode;
 import it.unisa.ast.type.TypeNode;
-import it.unisa.visitor.semantic.SemanticChecker;
-import it.unisa.visitor.semantic.SemanticData;
+import it.unisa.semantic.SemanticChecker;
+import it.unisa.semantic.SemanticData;
 import it.unisa.visitor.semantic.scope.identifier.IdentifierDeclarationVisitor;
 import it.unisa.visitor.semantic.scope.identifier.IdentifierDefUseVisitor;
 import it.unisa.visitor.semantic.scope.type.TypeDeclarationVisitor;
@@ -27,7 +27,7 @@ Se il nodo è legato ad un costrutto statement che usa degli identificatori (Sta
 */
 
 @SuppressWarnings("unchecked")
-class ScopeChecker extends SemanticChecker {
+public class ScopeChecker extends SemanticChecker {
     public static final String MULTIPLE_DECLARATION = "Multiple declaration of the identifier: ";
     public static final String NO_SCOPE = "No active scope";
     public static final String NO_DECLARATION = "No declaration of the identifier: ";
@@ -40,7 +40,7 @@ class ScopeChecker extends SemanticChecker {
      * @return An <i>ArrayList</i> of <i>String</i> containing the multiple declarations error messages. It is empty if everything is okay.
      */
     //Scope Check B
-    ArrayList<String> checkMultipleDeclarations(DeclarationNode n) {
+    public ArrayList<String> checkMultipleDeclarations(DeclarationNode n) {
         ArrayList<String> errors = new ArrayList<>();
         if (!getSymbolTable().empty()) {
             IdentifierDeclarationVisitor idv = new IdentifierDeclarationVisitor();
@@ -109,7 +109,7 @@ class ScopeChecker extends SemanticChecker {
      * @return An <i>ArrayList</i> of <i>String</i> containing the no declaration error messages. It is empty if everything is okay.
      */
     //Scope Check C
-    ArrayList<String> checkUndeclarations(StatementNode n) {
+    public ArrayList<String> checkUndeclarations(StatementNode n) {
         ArrayList<String> errors = new ArrayList<>();
         if (!getSymbolTable().empty()) {
             IdentifierDefUseVisitor iv = new IdentifierDefUseVisitor();

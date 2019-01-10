@@ -1,17 +1,16 @@
 head
     int scelta = 1;
     double primoNumero, secondoNumero, risultato;
-    int global;
 
-    def mostraMenu(in int sharedParameter) {
-        int sharedParameter;
+    def wrongMath() {
+        bool b;
 
-        sharedParameter = 2;
-        sharedParameter = true;
-        nonVariable2 = nonVariable2 + nonVariable3 + nonVariable5;
-        nonVariable4 <-;
-        nonProcedure(nonParameter1, nonParameter2);
-        nonOut ->;
+        scelta = scelta + true;
+        scelta = scelta - "";
+        scelta = - 'c';
+        b = not 2;
+        if ("ciao" < 'c') then {
+        }
     }
 
     def mostraMenu() {

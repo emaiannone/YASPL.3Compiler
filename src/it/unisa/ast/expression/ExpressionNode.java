@@ -8,7 +8,7 @@ public abstract class ExpressionNode extends MyNode {
 
     public ExpressionNode(Object data) {
         super(data);
-        type = "";
+        type = null;
     }
 
     public void setType(String type) {

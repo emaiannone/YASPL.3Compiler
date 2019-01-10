@@ -5,20 +5,22 @@ import it.unisa.ast.declaration.procedure.ProcedureDeclarationNode;
 import it.unisa.ast.declaration.procedure.parameter.*;
 import it.unisa.ast.declaration.variable.VarDeclarationNode;
 import it.unisa.ast.expression.ExpressionNode;
-import it.unisa.ast.expression.arithmetic.*;
-import it.unisa.ast.expression.bool.AndOpNode;
-import it.unisa.ast.expression.bool.BoolOpNode;
-import it.unisa.ast.expression.bool.OrOpNode;
 import it.unisa.ast.expression.constant.*;
 import it.unisa.ast.expression.identifier.IdentifierNode;
-import it.unisa.ast.expression.relational.*;
-import it.unisa.ast.expression.unary.NotOpNode;
-import it.unisa.ast.expression.unary.UminusOpNode;
+import it.unisa.ast.expression.operation.arithmetic.DivOpNode;
+import it.unisa.ast.expression.operation.arithmetic.MinusOpNode;
+import it.unisa.ast.expression.operation.arithmetic.PlusOpNode;
+import it.unisa.ast.expression.operation.arithmetic.TimesOpNode;
+import it.unisa.ast.expression.operation.bool.AndOpNode;
+import it.unisa.ast.expression.operation.bool.OrOpNode;
+import it.unisa.ast.expression.operation.relational.*;
+import it.unisa.ast.expression.operation.unary.NotOpNode;
+import it.unisa.ast.expression.operation.unary.UminusOpNode;
 import it.unisa.ast.initialization.VarInitNode;
 import it.unisa.ast.list.*;
 import it.unisa.ast.programma.ProgrammaNode;
 import it.unisa.ast.statement.*;
-import it.unisa.ast.kind.*;
+import it.unisa.ast.type.*;
 import it.unisa.lexer.Yylex;
 
 import java.util.LinkedHashSet;
@@ -158,8 +160,8 @@ Comp_stat ::= LGPAR Statements: l RGPAR                     {: RESULT = l; :}
 
 ////////////////////////////////////////// Expressions and operations //////////////////////////////////////////
 // Statement singolo
+// Vars è stato cambiato in Args: si rimanda all'analisi semantica se la read prende solo una lista di ID e non di espressioni
 Stat ::= Args: a READ SEMI                                          {: ReadOpNode n = new ReadOpNode(); n.add(a); RESULT = n; :}
-        // Vars è stato cambiato in Args: si rimanda all'analisi semantica se la read prende solo una lista di ID e non di espressioni
  	| Args: a WRITE SEMI                                            {: WriteOpNode n = new WriteOpNode(); n.add(a); RESULT = n; :}
  	| ID: id ASSIGN Expr: e SEMI                                    {: AssignOpNode n = new AssignOpNode(); n.add(new IdentifierNode(id)); n.add(e); RESULT = n; :}
  	| ID: id LPAR Args: a RPAR SEMI                                 {: CallOpNode n = new CallOpNode(); n.add(new IdentifierNode(id)); n.add(a); RESULT = n; :}
@@ -197,6 +199,12 @@ Expr ::= Expr: e1 PLUS Expr: e2         {: PlusOpNode op = new PlusOpNode(); op.
     | CHAR_CONST: value                 {: RESULT = new CharConstantNode(value); :}
     | STRING_CONST: value               {: RESULT = new StringConstantNode(value); :}
 ;
+
+/*
+    Code for having a line of an element:
+    int line = ((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top - n - 1)).left;
+    where n il the # of symbols in the production
+*/
 
 /* Javacup possible bug: in the generated parser class, there will be an error in the case of the empty reduction in a statement like this:
    CUP$Parser$result = parser.getSymbolFactory().newSymbol("empty", 19, ((java_cup.runtime.Symbol) CUP$Parser$stack.getCurrentScope()), ((java_cup.runtime.Symbol) CUP$Parser$stack.getCurrentScope()), RESULT);

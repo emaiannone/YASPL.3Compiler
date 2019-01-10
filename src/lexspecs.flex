@@ -1,6 +1,6 @@
 // Give this file to jflex program and insert the resulting .class file into your project!!
 import it.unisa.parser.ParserSym;
-import java_cup.runtime.*;
+import java_cup.runtime.Symbol;
 %%
 %class Yylex    // Class name of the Lexical Analyzer
 %public
@@ -22,14 +22,12 @@ import java_cup.runtime.*;
 	The symbol() methods will be used to create a Symbol (class of jflex library) object, representing a token.
 */
 %{
-  StringBuffer string = new StringBuffer();
-
   private Symbol symbol(int kind) {
-	return new Symbol(kind, yyline, yycolumn);
+      return new Symbol(kind, yyline, yycolumn);
   }
 
   private Symbol symbol(int kind, Object value) {
-	return new Symbol(kind, yyline, yycolumn, value);
+      return new Symbol(kind, yyline, yycolumn, value);
   }
 %}
 

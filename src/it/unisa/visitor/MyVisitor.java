@@ -10,7 +10,11 @@ import it.unisa.ast.expression.ExpressionNode;
 import it.unisa.ast.expression.constant.*;
 import it.unisa.ast.expression.identifier.IdentifierNode;
 import it.unisa.ast.expression.operation.OpNode;
-import it.unisa.ast.expression.operation.arithmetic.PlusOpNode;
+import it.unisa.ast.expression.operation.arithmetic.ArithOpNode;
+import it.unisa.ast.expression.operation.bool.BoolOpNode;
+import it.unisa.ast.expression.operation.relational.RelOpNode;
+import it.unisa.ast.expression.operation.unary.NotOpNode;
+import it.unisa.ast.expression.operation.unary.UminusOpNode;
 import it.unisa.ast.initialization.VarInitNode;
 import it.unisa.ast.list.VarInitListNode;
 import it.unisa.ast.programma.ProgrammaNode;
@@ -57,7 +61,15 @@ public interface MyVisitor {
 
     Object visit(OpNode n);
 
-    Object visit(PlusOpNode n);
+    Object visit(ArithOpNode n);
+
+    Object visit(BoolOpNode n);
+
+    Object visit(RelOpNode n);
+
+    Object visit(UminusOpNode n);
+
+    Object visit(NotOpNode n);
 
     Object visit(TypeNode n);
 }

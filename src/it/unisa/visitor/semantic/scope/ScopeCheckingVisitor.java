@@ -6,6 +6,7 @@ import it.unisa.ast.declaration.procedure.parameter.ParDeclarationNode;
 import it.unisa.ast.declaration.variable.VarDeclarationNode;
 import it.unisa.ast.programma.ProgrammaNode;
 import it.unisa.ast.statement.StatementNode;
+import it.unisa.semantic.scoping.ScopeChecker;
 import it.unisa.visitor.semantic.SemanticVisitor;
 
 import java.util.ArrayList;

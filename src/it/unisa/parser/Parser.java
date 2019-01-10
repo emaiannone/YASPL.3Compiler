@@ -9,14 +9,14 @@ import it.unisa.ast.declaration.procedure.ProcedureDeclarationNode;
 import it.unisa.ast.declaration.procedure.parameter.*;
 import it.unisa.ast.declaration.variable.VarDeclarationNode;
 import it.unisa.ast.expression.ExpressionNode;
+import it.unisa.ast.expression.constant.*;
+import it.unisa.ast.expression.identifier.IdentifierNode;
 import it.unisa.ast.expression.operation.arithmetic.DivOpNode;
 import it.unisa.ast.expression.operation.arithmetic.MinusOpNode;
 import it.unisa.ast.expression.operation.arithmetic.PlusOpNode;
 import it.unisa.ast.expression.operation.arithmetic.TimesOpNode;
 import it.unisa.ast.expression.operation.bool.AndOpNode;
 import it.unisa.ast.expression.operation.bool.OrOpNode;
-import it.unisa.ast.expression.constant.*;
-import it.unisa.ast.expression.identifier.IdentifierNode;
 import it.unisa.ast.expression.operation.relational.*;
 import it.unisa.ast.expression.operation.unary.NotOpNode;
 import it.unisa.ast.expression.operation.unary.UminusOpNode;
@@ -386,7 +386,7 @@ public class Parser extends java_cup.runtime.lr_parser {
             java_cup.runtime.lr_parser parser,
             java.util.Stack stack,
             int top)
-            throws Exception {
+            throws java.lang.Exception {
         /* call code in generated class */
         return action_obj.CUP$Parser$do_action(act_num, parser, stack, top);
     }
@@ -424,7 +424,7 @@ public class Parser extends java_cup.runtime.lr_parser {
      * Scan to get the next Symbol.
      */
     public java_cup.runtime.Symbol scan()
-            throws Exception {
+            throws java.lang.Exception {
         return lexer.next_token();
     }
 
@@ -459,7 +459,7 @@ public class Parser extends java_cup.runtime.lr_parser {
                 java_cup.runtime.lr_parser CUP$Parser$parser,
                 java.util.Stack CUP$Parser$stack,
                 int CUP$Parser$top)
-                throws Exception {
+                throws java.lang.Exception {
             /* Symbol object for return from actions */
             java_cup.runtime.Symbol CUP$Parser$result;
 
@@ -1403,7 +1403,7 @@ public class Parser extends java_cup.runtime.lr_parser {
                 java_cup.runtime.lr_parser CUP$Parser$parser,
                 java.util.Stack CUP$Parser$stack,
                 int CUP$Parser$top)
-                throws Exception {
+                throws java.lang.Exception {
             return CUP$Parser$do_action_part00000000(
                     CUP$Parser$act_num,
                     CUP$Parser$parser,

@@ -500,14 +500,12 @@ public class Yylex implements java_cup.runtime.Scanner {
     private int zzFinalHighSurrogate = 0;
 
     /* user code: */
-    StringBuffer string = new StringBuffer();
-
-    private Symbol symbol(int type) {
-        return new Symbol(type, yyline, yycolumn);
+    private Symbol symbol(int kind) {
+        return new Symbol(kind, yyline, yycolumn);
     }
 
-    private Symbol symbol(int type, Object value) {
-        return new Symbol(type, yyline, yycolumn, value);
+    private Symbol symbol(int kind, Object value) {
+        return new Symbol(kind, yyline, yycolumn, value);
     }
 
 

@@ -1,4 +1,4 @@
-package it.unisa.visitor.semantic;
+package it.unisa.semantic;
 
 import java.util.HashMap;
 

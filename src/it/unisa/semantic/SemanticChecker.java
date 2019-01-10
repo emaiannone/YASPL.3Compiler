@@ -1,4 +1,4 @@
-package it.unisa.visitor.semantic;
+package it.unisa.semantic;
 
 import it.unisa.ast.MyNode;
 import it.unisa.ast.declaration.procedure.ProcedureDeclarationNode;

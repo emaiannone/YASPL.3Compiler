@@ -3,11 +3,18 @@ package it.unisa.visitor.semantic.type;
 import it.unisa.ast.declaration.procedure.ProcedureDeclarationNode;
 import it.unisa.ast.expression.constant.*;
 import it.unisa.ast.expression.identifier.IdentifierNode;
-import it.unisa.ast.expression.operation.arithmetic.PlusOpNode;
+import it.unisa.ast.expression.operation.OpNode;
+import it.unisa.ast.expression.operation.arithmetic.ArithOpNode;
+import it.unisa.ast.expression.operation.bool.BoolOpNode;
+import it.unisa.ast.expression.operation.relational.RelOpNode;
+import it.unisa.ast.expression.operation.unary.NotOpNode;
+import it.unisa.ast.expression.operation.unary.UminusOpNode;
+import it.unisa.ast.expression.operation.unary.UnaryOpNode;
 import it.unisa.ast.programma.ProgrammaNode;
+import it.unisa.semantic.typing.TypeChecker;
+import it.unisa.semantic.typing.TypeSystem;
 import it.unisa.visitor.semantic.SemanticVisitor;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 @SuppressWarnings("unchecked")
@@ -18,7 +25,17 @@ public class TypeCheckingVisitor extends SemanticVisitor {
         typeChecker = new TypeChecker();
     }
 
-    //TODO visite sui nodi Expression, e Statement principalmente
+    private ArrayList<String> assignType(OpNode n, int[][] typeTable) {
+        // It first goes to the inductive base to calculate the type of the inner-most operations
+        ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
+        String typeCheckResult = typeChecker.assignType(n, typeTable);
+
+        ArrayList<String> result = new ArrayList<>(subResult);
+        if (typeCheckResult != null && !typeCheckResult.equals("")) {
+            result.add(typeCheckResult);
+        }
+        return result;
+    }
 
     @Override
     public Object visit(ProgrammaNode n) {
@@ -39,19 +56,33 @@ public class TypeCheckingVisitor extends SemanticVisitor {
     }
 
     @Override
-    public Object visit(PlusOpNode n) {
-        // It first goes to the inductive base to calculate the type of the inner-most operations
-        ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
-        String typeCheckResult = typeChecker.checkType(n, TypeSystem.PLUS_TABLE);
-
-        ArrayList<String> result = new ArrayList<>(subResult);
-        if (typeCheckResult != null && !typeCheckResult.equals("")) {
-            result.add(typeCheckResult);
-        }
-        return result;
+    public Object visit(ArithOpNode n) {
+        return assignType(n, TypeSystem.arithTable);
     }
 
-    //TODO Altre visite una per tabella di tipo
+    @Override
+    public Object visit(BoolOpNode n) {
+        return assignType(n, TypeSystem.boolTable);
+    }
+
+    @Override
+    public Object visit(RelOpNode n) {
+        return assignType(n, TypeSystem.relationalTable);
+    }
+
+    @Override
+    public Object visit(UminusOpNode n) {
+        return assignType(n, TypeSystem.uminusTable);
+    }
+
+    @Override
+    public Object visit(NotOpNode n) {
+        return assignType(n, TypeSystem.notTable);
+    }
+
+    //TODO Altre visite, una per classe di nodi che condividono una stessa tabella
+
+    //TODO visite sui nodi Statement
 
     @Override
     public Object visit(IntegerConstantNode n) {

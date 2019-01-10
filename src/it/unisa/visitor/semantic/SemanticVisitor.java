@@ -10,7 +10,11 @@ import it.unisa.ast.expression.ExpressionNode;
 import it.unisa.ast.expression.constant.*;
 import it.unisa.ast.expression.identifier.IdentifierNode;
 import it.unisa.ast.expression.operation.OpNode;
-import it.unisa.ast.expression.operation.arithmetic.PlusOpNode;
+import it.unisa.ast.expression.operation.arithmetic.ArithOpNode;
+import it.unisa.ast.expression.operation.bool.BoolOpNode;
+import it.unisa.ast.expression.operation.relational.RelOpNode;
+import it.unisa.ast.expression.operation.unary.NotOpNode;
+import it.unisa.ast.expression.operation.unary.UminusOpNode;
 import it.unisa.ast.initialization.VarInitNode;
 import it.unisa.ast.list.VarInitListNode;
 import it.unisa.ast.programma.ProgrammaNode;
@@ -140,7 +144,27 @@ public abstract class SemanticVisitor implements MyVisitor {
     }
 
     @Override
-    public Object visit(PlusOpNode n) {
+    public Object visit(ArithOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(BoolOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(RelOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(UminusOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(NotOpNode n) {
         return visitSubtree(n);
     }
 
