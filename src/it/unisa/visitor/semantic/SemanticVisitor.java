@@ -18,8 +18,10 @@ import it.unisa.ast.expression.operation.unary.UminusOpNode;
 import it.unisa.ast.initialization.VarInitNode;
 import it.unisa.ast.list.VarInitListNode;
 import it.unisa.ast.programma.ProgrammaNode;
-import it.unisa.ast.statement.AssignOpNode;
-import it.unisa.ast.statement.StatementNode;
+import it.unisa.ast.statement.*;
+import it.unisa.ast.statement.conditional.IfThenElseOpNode;
+import it.unisa.ast.statement.conditional.IfThenOpNode;
+import it.unisa.ast.statement.conditional.WhileOpNode;
 import it.unisa.ast.type.TypeNode;
 import it.unisa.visitor.MyVisitor;
 
@@ -171,6 +173,21 @@ public abstract class SemanticVisitor implements MyVisitor {
 
     @Override
     public Object visit(AssignOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(WhileOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(IfThenOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(IfThenElseOpNode n) {
         return visitSubtree(n);
     }
 

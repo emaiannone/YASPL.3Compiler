@@ -18,6 +18,7 @@ public class TypeSystem {
     public static final int[][] uminusTable = initUminusTable();
     public static final int[][] notTable = initNotTable();
     public static final int[][] assignTable = initAssignTable();
+    public static final int[][] conditionalTable = initConditionalTable();
 
     //TODO Le altre tabelle
 
@@ -275,5 +276,18 @@ public class TypeSystem {
         assignTable[BOOLEAN][BOOLEAN] = VOID;
 
         return assignTable;
+    }
+
+    private static int[][] initConditionalTable() {
+        int[][] conditionalTable = new int[6][1];
+
+        conditionalTable[VOID][0] = ERROR;
+        conditionalTable[INTEGER][0] = ERROR;
+        conditionalTable[DOUBLE][0] = ERROR;
+        conditionalTable[STRING][0] = ERROR;
+        conditionalTable[CHARACTER][0] = ERROR;
+        conditionalTable[BOOLEAN][0] = VOID;
+
+        return conditionalTable;
     }
 }

@@ -8,8 +8,13 @@ head
         scelta = scelta + true;
         scelta = scelta - "";
         scelta = - 'c';
-        b = not 2;
+        b = 2;
         if ("ciao" < 'c') then {
+        }
+        while (2) do {
+        }
+        if("vero") then {
+        } else {
         }
     }
 

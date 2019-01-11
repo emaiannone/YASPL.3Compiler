@@ -1,8 +1,12 @@
 package it.unisa.semantic.typing;
 
-import it.unisa.ast.ExpressionStatementNode;
+import it.unisa.ast.expression.ExpressionNode;
 import it.unisa.ast.expression.constant.*;
 import it.unisa.ast.expression.identifier.IdentifierNode;
+import it.unisa.ast.statement.AssignOpNode;
+import it.unisa.ast.statement.conditional.IfThenElseOpNode;
+import it.unisa.ast.statement.conditional.IfThenOpNode;
+import it.unisa.ast.statement.conditional.WhileOpNode;
 import it.unisa.ast.type.*;
 import it.unisa.semantic.SemanticChecker;
 import it.unisa.semantic.SemanticData;
@@ -23,7 +27,11 @@ Type Check E.
  */
 
 public class TypeChecker extends SemanticChecker {
-    public static final String TYPE_MISMATCH_EXPRESSION = "Type mismatch: ";
+    public static final String TYPE_MISMATCH_EXPRESSION = "Type mismatch on expression: ";
+    public static final String TYPE_MISMATCH_ASSIGN = "Type mismatch on assign: ";
+    public static final String TYPE_MISMATCH_WHILE = "Type mismatch on while: condition cannot be a ";
+    public static final String TYPE_MISMATCH_IF = "Type mismatch on if: condition cannot be a ";
+    public static final String TYPE_MISMATCH_IF_ELSE = "Type mismatch on if-else: condition cannot be a ";
     public static final String NO_TYPE = "Cannot apply type checking on nodes without a type";
 
     //Type Check D
@@ -63,56 +71,154 @@ public class TypeChecker extends SemanticChecker {
     }
 
     // TODO Improve code quality
-    // TODO Farsi passare dal visitor una stringa riportante il nome dell'operazione/statement?
+    // TODO Farsi passare dal visitor una stringa riportante il nome dell'operazione?
     // Partial Type Check E. It checks the two children types or the first child type, according to the number of children
-    public String assignType(ExpressionStatementNode n, int[][] typeTable) {
-        String error = null;
-
+    public String assignType(ExpressionNode n, int[][] typeTable) {
         //TODO Remove
         System.out.println(n);
 
-        ExpressionStatementNode firstChild = (ExpressionStatementNode) n.getChild(0);
+        ExpressionNode firstChild = (ExpressionNode) n.getChild(0);
         String firstType = firstChild.getType();
-        String secondType = null;
         if (firstType == null) {
             //TODO Remove
             System.out.println("Error: " + NO_TYPE);
             return NO_TYPE;
-        } else {
-            int row = TypeSystem.stringToInt(firstType);
-            int entry;
-            String type;
-
-            ExpressionStatementNode secondChild = (ExpressionStatementNode) n.getChild(1);
-            if (secondChild != null) {
-                // Binary Operations
-                secondType = secondChild.getType();
-                if (secondType == null) {
-                    System.out.println(NO_TYPE);
-                    return NO_TYPE;
-                } else {
-                    int column = TypeSystem.stringToInt(secondType);
-                    entry = typeTable[row][column];
-                }
-            } else {
-                // Unary Operations
-                entry = typeTable[row][0];
-            }
-            type = TypeSystem.intToString(entry);
-            n.setType(type);
-            //TODO Remove
-            System.out.println("Type set: " + type);
-            if (type == null) {
-                if (secondType != null) {
-                    error = TYPE_MISMATCH_EXPRESSION + firstType + " and " + secondType + " are incompatible with this operation";
-                } else {
-                    error = TYPE_MISMATCH_EXPRESSION + firstType + " is incompatible with this operation";
-                }
+        }
+        int row = TypeSystem.stringToInt(firstType);
+        int column = 0; // Ready for unary op as default
+        ExpressionNode secondChild = (ExpressionNode) n.getChild(1);
+        String secondType = null;
+        if (secondChild != null) {
+            // Executed for Binary Operations
+            secondType = secondChild.getType();
+            if (secondType == null) {
                 //TODO Remove
-                System.out.println(error);
+                System.out.println("Error: " + NO_TYPE);
+                return NO_TYPE;
+            }
+            column = TypeSystem.stringToInt(secondType);
+        }
+        String type = TypeSystem.intToString(typeTable[row][column]);
+        if (type == null) {
+            if (secondType != null) {
+                //TODO Remove
+                System.out.println(TYPE_MISMATCH_EXPRESSION + firstType + " and " + secondType + " are incompatible with this operation");
+                return TYPE_MISMATCH_EXPRESSION + firstType + " and " + secondType + " are incompatible with this operation";
+            } else {
+                //TODO Remove
+                System.out.println(TYPE_MISMATCH_EXPRESSION + firstType + " is incompatible with this operation");
+                return TYPE_MISMATCH_EXPRESSION + firstType + " is incompatible with this operation";
             }
         }
-        return error;
+        //TODO Remove
+        System.out.println("Type set: " + type);
+        n.setType(type);
+        return null;
+    }
+
+    public String assignType(AssignOpNode n) {
+        //TODO Remove
+        System.out.println(n);
+
+        ExpressionNode firstChild = (ExpressionNode) n.getChild(0);
+        String firstType = firstChild.getType();
+        if (firstType == null) {
+            //TODO Remove
+            System.out.println("Error: " + NO_TYPE);
+            return NO_TYPE;
+        }
+        ExpressionNode secondChild = (ExpressionNode) n.getChild(1);
+        String secondType = null;
+        secondType = secondChild.getType();
+        if (secondType == null) {
+            //TODO Remove
+            System.out.println("Error: " + NO_TYPE);
+            return NO_TYPE;
+        }
+        int row = TypeSystem.stringToInt(firstType);
+        int column = TypeSystem.stringToInt(secondType);
+        String type = TypeSystem.intToString(TypeSystem.assignTable[row][column]);
+        if (type == null) {
+            //TODO Remove
+            System.out.println(TYPE_MISMATCH_ASSIGN + secondType + " cannot be assigned to a " + firstType);
+            return TYPE_MISMATCH_ASSIGN + secondType + " cannot be assigned to a " + firstType;
+        }
+        //TODO Remove
+        System.out.println("Type set: " + type);
+        n.setType(type);
+        return null;
+    }
+
+    public String assignType(WhileOpNode n) {
+        //TODO Remove
+        System.out.println(n);
+
+        ExpressionNode firstChild = (ExpressionNode) n.getChild(0);
+        String firstType = firstChild.getType();
+        if (firstType == null) {
+            //TODO Remove
+            System.out.println("Error: " + NO_TYPE);
+            return NO_TYPE;
+        }
+        int row = TypeSystem.stringToInt(firstType);
+        String type = TypeSystem.intToString(TypeSystem.conditionalTable[row][0]);
+        if (type == null) {
+            //TODO Remove
+            System.out.println(TYPE_MISMATCH_WHILE + firstType);
+            return TYPE_MISMATCH_WHILE + firstType;
+        }
+        //TODO Remove
+        System.out.println("Type set: " + type);
+        n.setType(type);
+        return null;
+    }
+
+    public String assignType(IfThenOpNode n) {
+        //TODO Remove
+        System.out.println(n);
+
+        ExpressionNode firstChild = (ExpressionNode) n.getChild(0);
+        String firstType = firstChild.getType();
+        if (firstType == null) {
+            //TODO Remove
+            System.out.println("Error: " + NO_TYPE);
+            return NO_TYPE;
+        }
+        int row = TypeSystem.stringToInt(firstType);
+        String type = TypeSystem.intToString(TypeSystem.conditionalTable[row][0]);
+        if (type == null) {
+            //TODO Remove
+            System.out.println(TYPE_MISMATCH_IF + firstType);
+            return TYPE_MISMATCH_IF + firstType;
+        }
+        //TODO Remove
+        System.out.println("Type set: " + type);
+        n.setType(type);
+        return null;
+    }
+
+    public String assignType(IfThenElseOpNode n) {
+        //TODO Remove
+        System.out.println(n);
+
+        ExpressionNode firstChild = (ExpressionNode) n.getChild(0);
+        String firstType = firstChild.getType();
+        if (firstType == null) {
+            //TODO Remove
+            System.out.println("Error: " + NO_TYPE);
+            return NO_TYPE;
+        }
+        int row = TypeSystem.stringToInt(firstType);
+        String type = TypeSystem.intToString(TypeSystem.conditionalTable[row][0]);
+        if (type == null) {
+            //TODO Remove
+            System.out.println(TYPE_MISMATCH_IF_ELSE + firstType);
+            return TYPE_MISMATCH_IF_ELSE + firstType;
+        }
+        //TODO Remove
+        System.out.println("Type set: " + type);
+        n.setType(type);
+        return null;
     }
 
     //1. Viene lanciato il visitatore
