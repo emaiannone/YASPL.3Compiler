@@ -8,6 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/res/outxml" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/res/programTests" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/res/specifications" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/res/cout" type="java-resource" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

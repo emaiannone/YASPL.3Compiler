@@ -20,8 +20,8 @@ head
 
         wrongProcedure();
         wrongProcedure(2.0, scelta + 2, 2, wrongProcedure);
-        /*wrongProcedure <- ;
-        2+2, scelta <- ;*/
+        wrongProcedure <- ;
+        2+2, scelta <- ;
     }
 
     def mostraMenu() {

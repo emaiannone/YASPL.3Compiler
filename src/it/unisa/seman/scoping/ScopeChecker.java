@@ -32,9 +32,9 @@ Se il nodo è legato ad un costrutto statement che usa degli identificatori (Sta
 
 @SuppressWarnings("unchecked")
 public class ScopeChecker extends SemanticChecker {
-    public static final String MULTIPLE_DECLARATION = "Multiple declaration of the identifier: ";
-    public static final String NO_SCOPE = "No active scope";
-    public static final String NO_DECLARATION = "No declaration of the identifier: ";
+    public static final String MULTIPLE_DECLARATION = "There are multiple declaration of the identifier: ";
+    public static final String NO_DECLARATION = "There is no declaration of the identifier: ";
+    public static final String NO_SCOPE = "There is no active scope";
 
     /**
      * Check for multiple declaration of an identifier in the same scope.

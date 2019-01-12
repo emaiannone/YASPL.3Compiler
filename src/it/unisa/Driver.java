@@ -14,57 +14,69 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "Duplicates"})
 public class Driver {
     public static void main(String[] args) {
+
+        System.out.print("Parsing... ");
         ProgrammaNode root = null;
         try {
-            System.out.println("\nParsing... ");
-            root = parse("res/ProgramTests/programmaErroriType.yaspl");
-            System.out.println("Parsing successful!");
-        } catch (Exception e) {
-            System.out.println("Parsing error.");
-        }
-        try {
-            if (root != null) {
-                writeToFile("res/outxml/AST.xml", getXML(root));
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("Writing to XML file error.");
-        }
-        try {
-            if (root != null) {
-                System.out.println("\nStarting scope checking...");
-                ScopeCheckingVisitor scv = new ScopeCheckingVisitor();
-                ArrayList<String> scopeErrors = (ArrayList<String>) root.accept(scv);
-
-                if (scopeErrors.isEmpty()) {
-                    System.out.println("Scope checking successful!");
-                    System.out.println("\nStarting type checking...");
-                    TypeCheckingVisitor tcv = new TypeCheckingVisitor();
-                    ArrayList<String> typeErrors = (ArrayList<String>) root.accept(tcv);
-                    if (typeErrors.isEmpty()) {
-                        System.out.println("Type checking successful!");
-
-                        //TODO Lanciare visitor che genera il codice C
-
-                    } else {
-                        System.out.println("Type checking failed:");
-                        for (String e : typeErrors) {
-                            System.out.println('\t' + e);
-                        }
-                    }
-                } else {
-                    System.out.println("Scope checking failed:");
-                    //scopeErrors.removeAll(Collections.singleton(null));  // Discards the null elements
-                    for (String e : scopeErrors) {
-                        System.out.println('\t' + e);
-                    }
-                }
-            }
+            root = parse("res/ProgramTests/programma.yaspl");
+            System.out.println("successful!");
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Checking error.");
+            System.out.println("failed!");
+        }
+
+        if (root != null) {
+            System.out.print("Writing XML... ");
+            try {
+                writeToFile("res/outxml/AST.xml", getXML(root));
+                System.out.println("successful!");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                System.out.println("failed!");
+            }
+
+            System.out.print("Scope checking...");
+            boolean scopeOK = false;
+            try {
+                ArrayList<String> scopeErrors = scopeCheck(root);
+                if (scopeErrors.isEmpty()) {
+                    System.out.println("successful!");
+                    scopeOK = true;
+                } else {
+                    System.out.println("failed:");
+                    printErrors(scopeErrors);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("failed!");
+            }
+
+            if (scopeOK) {
+                System.out.print("Type checking...");
+                boolean typeOK = false;
+                try {
+                    ArrayList<String> typeErrors = typeCheck(root);
+                    if (typeErrors.isEmpty()) {
+                        System.out.println("successful!");
+                        typeOK = true;
+                    } else {
+                        System.out.println("failed:");
+                        printErrors(typeErrors);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("failed!");
+                }
+
+                if (typeOK) {
+                    //TODO Lancio Visita Generazione C e scrivere in un file in cout
+
+                    //TODO Lancio clang sul file generato
+                }
+            }
         }
     }
 
@@ -82,21 +94,34 @@ public class Driver {
 
     private static ProgrammaNode parse(String fileName) throws Exception {
         Yylex yylex = new Yylex(new FileReader(fileName));
-
         Parser p = new Parser(yylex);
-
         return (ProgrammaNode) p.parse().value;
     }
 
     private static String getXML(ProgrammaNode root) {
         XMLMyVisitor v = new XMLMyVisitor();
-
         return (String) root.accept(v);
     }
 
     private static void writeToFile(String fileName, String content) throws FileNotFoundException {
-        PrintWriter xmlAST = new PrintWriter(fileName);
-        xmlAST.print(content);
-        xmlAST.close();
+        PrintWriter pw = new PrintWriter(fileName);
+        pw.print(content);
+        pw.close();
+    }
+
+    private static ArrayList<String> scopeCheck(ProgrammaNode root) {
+        ScopeCheckingVisitor scv = new ScopeCheckingVisitor();
+        return (ArrayList<String>) root.accept(scv);
+    }
+
+    private static ArrayList<String> typeCheck(ProgrammaNode root) {
+        TypeCheckingVisitor tcv = new TypeCheckingVisitor();
+        return (ArrayList<String>) root.accept(tcv);
+    }
+
+    private static void printErrors(ArrayList<String> errors) {
+        for (String e : errors) {
+            System.out.println('\t' + e);
+        }
     }
 }

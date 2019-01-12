@@ -32,15 +32,41 @@ Type Check E.
  */
 
 public class TypeChecker extends SemanticChecker {
-    public static final String TYPE_MISMATCH_EXPRESSION = "Type mismatch on expression: ";
-    public static final String TYPE_MISMATCH_ASSIGN = "Type mismatch on assign: ";
-    public static final String TYPE_MISMATCH_CONDITIONAL = "Type mismatch on condition: it cannot be a ";
-    public static final String NUMBER_MISMATCH_CALL = "Number of parameters on procedure call is invalid";
-    public static final String TYPE_MISMATCH_CALL = "Type mismatch on procedure call: ";
-    public static final String IDENTIFIER_MISMATCH_CALL = "Procedures cannot be used as actual parameters";
-    public static final String KIND_MISMATCH_CALL = "Expressions cannot be passed to procedures as output parameters";
-    public static final String TYPE_MISMATCH_READ = "Read can only be done on variable or parameters";
-    public static final String NO_TYPE = "Cannot apply type checking on nodes without a type";
+    private static final String NUMBER_MISMATCH_CALL = "The number of parameters in the procedure call is not valid";
+    private static final String TYPE_MISMATCH_READ = "Expressions and constants cannot be used as read argument";
+    private static final String NO_TYPE = "Type checking cannot be applied to nodes without a type";
+
+    private String buildBinaryOpMismatch(String firstType, String secondType) {
+        return "Incompatibility between " + firstType + " and " + secondType + " with this operation";
+    }
+
+    private String buildUnaryOpMismatch(String type) {
+        return "Incompatibility of " + type + " with this operation";
+    }
+
+    private String buildAssignMismatch(String firstType, String secondType) {
+        return "A " + secondType + " cannot be assigned to a " + firstType;
+    }
+
+    private String buildConditionalMismatch(String type) {
+        return "The condition cannot be " + type;
+    }
+
+    private String buildCallMismatch(String firstType, String secondType) {
+        return "A " + secondType + " parameter cannot be passed to a " + firstType + " parameter";
+    }
+
+    private String buildCallIllegalParameter(String procedureName) {
+        return "The procedure name " + procedureName + " cannot be passed used as actual parameter";
+    }
+
+    private String buildCallKindViolation(String expressionType) {
+        return "An " + expressionType + " expression cannot be passed to an output parameter";
+    }
+
+    private String buildReadIllegalProcedure(String procedureName) {
+        return "The procedure name " + procedureName + " cannot be used as a read argument";
+    }
 
     //Type Check D
     public void assignType(IntegerConstantNode n) {
@@ -77,7 +103,6 @@ public class TypeChecker extends SemanticChecker {
         }
     }
 
-    // TODO Farsi passare dal visitor una stringa riportante il nome dell'operazione?
     // Partial Type Check E. It checks the two children types or the first child type, according to the number of children
     public String assignType(ExpressionNode n, int[][] typeTable) {
         ExpressionNode firstChild = (ExpressionNode) n.getChild(0);
@@ -100,9 +125,9 @@ public class TypeChecker extends SemanticChecker {
         String type = TypeSystem.intToString(typeTable[row][column]);
         if (type == null) {
             if (secondType != null) {
-                return TYPE_MISMATCH_EXPRESSION + firstType + " and " + secondType + " are incompatible with this operation";
+                return buildBinaryOpMismatch(firstType, secondType);
             } else {
-                return TYPE_MISMATCH_EXPRESSION + firstType + " is incompatible with this operation";
+                return buildUnaryOpMismatch(firstType);
             }
         }
         n.setType(type);
@@ -124,7 +149,7 @@ public class TypeChecker extends SemanticChecker {
         int column = TypeSystem.stringToInt(secondType);
         String type = TypeSystem.intToString(TypeSystem.assignTable[row][column]);
         if (type == null) {
-            return TYPE_MISMATCH_ASSIGN + secondType + " cannot be assigned to a " + firstType;
+            return buildAssignMismatch(firstType, secondType);
         }
         n.setType(type);
         return null;
@@ -139,7 +164,7 @@ public class TypeChecker extends SemanticChecker {
         int row = TypeSystem.stringToInt(firstType);
         String type = TypeSystem.intToString(TypeSystem.conditionalTable[row][0]);
         if (type == null) {
-            return TYPE_MISMATCH_CONDITIONAL + firstType;
+            return buildConditionalMismatch(firstType);
         }
         n.setType(type);
         return null;
@@ -178,15 +203,15 @@ public class TypeChecker extends SemanticChecker {
                 if (column != TypeSystem.ERROR) {
                     String type = TypeSystem.intToString(TypeSystem.assignTable[row][column]);
                     if (type == null) {
-                        errors.add(TYPE_MISMATCH_CALL + actualPar.getType() + " cannot be assigned to a " + formalPar.getType());
+                        errors.add(buildCallMismatch(formalPar.getType(), actualPar.getType()));
                     } else {
                         // ParType check. We have error if the formal par is out or inout and actual is a non identifier
                         if (!formalPar.getParType().equals(InNode.IN) && !(actualPar instanceof IdentifierNode)) {
-                            errors.add(KIND_MISMATCH_CALL);
+                            errors.add(buildCallKindViolation(actualPar.getType()));
                         }
                     }
                 } else {
-                    errors.add(IDENTIFIER_MISMATCH_CALL);
+                    errors.add(buildCallIllegalParameter((String) actualPar.data()));
                 }
             }
         }
@@ -201,11 +226,11 @@ public class TypeChecker extends SemanticChecker {
 
         ArgsNode varList = (ArgsNode) n.getChild(0);
         for (int i = 0; i < varList.childrenNumber(); i++) {
-            ExpressionNode var = (ExpressionNode) varList.getChild(i);
-            if (var instanceof IdentifierNode) {
-                String kind = getSymbolTable().lookup((String) var.data()).getKind();
+            ExpressionNode arg = (ExpressionNode) varList.getChild(i);
+            if (arg instanceof IdentifierNode) {
+                String kind = getSymbolTable().lookup((String) arg.data()).getKind();
                 if (kind.equals(ProcedureDeclarationNode.PROCEDURE)) {
-                    errors.add(TYPE_MISMATCH_READ);
+                    errors.add(buildReadIllegalProcedure((String) arg.data()));
                 }
             } else {
                 errors.add(TYPE_MISMATCH_READ);
