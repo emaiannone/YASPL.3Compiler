@@ -35,10 +35,11 @@ public class TypeChecker extends SemanticChecker {
     public static final String TYPE_MISMATCH_EXPRESSION = "Type mismatch on expression: ";
     public static final String TYPE_MISMATCH_ASSIGN = "Type mismatch on assign: ";
     public static final String TYPE_MISMATCH_CONDITIONAL = "Type mismatch on condition: it cannot be a ";
-    public static final String NUMBER_MISMATCH_PARAMETER = "Number of parameters on procedure call is invalid";
+    public static final String NUMBER_MISMATCH_CALL = "Number of parameters on procedure call is invalid";
     public static final String TYPE_MISMATCH_CALL = "Type mismatch on procedure call: ";
-    public static final String TYPE_MISMATCH_PARAMETER = "Cannot pass a non identifier to an output parameter on procedure call ";
-    public static final String TYPE_MISMATCH_READ = "Cannot read a non identifier ";
+    public static final String IDENTIFIER_MISMATCH_CALL = "Procedures cannot be used as actual parameters";
+    public static final String KIND_MISMATCH_CALL = "Expressions cannot be passed to procedures as output parameters";
+    public static final String TYPE_MISMATCH_READ = "Read can only be done on variable or parameters";
     public static final String NO_TYPE = "Cannot apply type checking on nodes without a type";
 
     //Type Check D
@@ -165,7 +166,7 @@ public class TypeChecker extends SemanticChecker {
             actualNumber = actualParameters.childrenNumber();
         }
         if (formalNumber != actualNumber) {
-            errors.add(NUMBER_MISMATCH_PARAMETER);
+            errors.add(NUMBER_MISMATCH_CALL);
         } else {
             for (int i = 0; i < formalNumber; i++) {
                 ParameterData formalPar = formalParameters.get(i);
@@ -174,14 +175,18 @@ public class TypeChecker extends SemanticChecker {
                 // Type check that reuses the assignTable
                 int row = TypeSystem.stringToInt(formalPar.getType());
                 int column = TypeSystem.stringToInt(actualPar.getType());
-                String type = TypeSystem.intToString(TypeSystem.assignTable[row][column]);
-                if (type == null) {
-                    errors.add(TYPE_MISMATCH_CALL + actualPar.getType() + " cannot be assigned to a " + formalPar.getType());
-                } else {
-                    // ParType check. We have error if the formal par is out or inout and actual is a non identifier
-                    if (!formalPar.getParType().equals(InNode.IN) && !(actualPar instanceof IdentifierNode)) {
-                        errors.add(TYPE_MISMATCH_PARAMETER);
+                if (column != TypeSystem.ERROR) {
+                    String type = TypeSystem.intToString(TypeSystem.assignTable[row][column]);
+                    if (type == null) {
+                        errors.add(TYPE_MISMATCH_CALL + actualPar.getType() + " cannot be assigned to a " + formalPar.getType());
+                    } else {
+                        // ParType check. We have error if the formal par is out or inout and actual is a non identifier
+                        if (!formalPar.getParType().equals(InNode.IN) && !(actualPar instanceof IdentifierNode)) {
+                            errors.add(KIND_MISMATCH_CALL);
+                        }
                     }
+                } else {
+                    errors.add(IDENTIFIER_MISMATCH_CALL);
                 }
             }
         }
