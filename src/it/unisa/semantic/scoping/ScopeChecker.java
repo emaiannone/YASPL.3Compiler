@@ -1,13 +1,17 @@
 package it.unisa.semantic.scoping;
 
 import it.unisa.ast.declaration.DeclarationNode;
+import it.unisa.ast.declaration.procedure.parameter.ParDeclarationNode;
+import it.unisa.ast.declaration.procedure.parameter.ParTypeNode;
 import it.unisa.ast.expression.identifier.IdentifierNode;
 import it.unisa.ast.statement.StatementNode;
 import it.unisa.ast.type.TypeNode;
+import it.unisa.semantic.ParameterData;
 import it.unisa.semantic.SemanticChecker;
 import it.unisa.semantic.SemanticData;
 import it.unisa.visitor.semantic.scope.identifier.IdentifierDeclarationVisitor;
 import it.unisa.visitor.semantic.scope.identifier.IdentifierVisitor;
+import it.unisa.visitor.semantic.scope.parameter.FormalParameterVisitor;
 import it.unisa.visitor.semantic.scope.type.TypeDeclarationVisitor;
 
 import java.util.ArrayList;
@@ -61,7 +65,25 @@ public class ScopeChecker extends SemanticChecker {
                             TypeNode typeNode = types.get(0);
                             semanticData.setType(typeNode.getType());
                         } else {
+                            // This is a procedure
                             semanticData.setType(null);
+
+                            // Fetch the formal paramater data
+                            FormalParameterVisitor fpv = new FormalParameterVisitor();
+                            ArrayList<ParDeclarationNode> pars = (ArrayList<ParDeclarationNode>) n.accept(fpv);
+                            if (pars != null && !pars.isEmpty()) {
+                                ArrayList<ParameterData> parameterDataList = new ArrayList<>();
+                                for (ParDeclarationNode t : pars) {
+                                    ParTypeNode parTypeNode = (ParTypeNode) t.getChild(0);
+                                    TypeNode typeNode = (TypeNode) t.getChild(1);
+
+                                    ParameterData parameterData = new ParameterData();
+                                    parameterData.setParType(parTypeNode.getType());
+                                    parameterData.setType(typeNode.getType());
+                                    parameterDataList.add(parameterData);
+                                }
+                                semanticData.setParameterList(parameterDataList);
+                            }
                         }
                         getSymbolTable().getCurrentScope().getTable().put(identifierName, semanticData);
                     }

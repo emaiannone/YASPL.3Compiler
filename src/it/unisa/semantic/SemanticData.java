@@ -1,9 +1,12 @@
 package it.unisa.semantic;
 
+import java.util.ArrayList;
+
 public class SemanticData {
     private String identifier;
     private String kind;
     private String type;
+    private ArrayList<ParameterData> parameterList;
 
     public SemanticData() {
 
@@ -33,11 +36,21 @@ public class SemanticData {
         this.type = type;
     }
 
+    public ArrayList<ParameterData> getParameterList() {
+        return parameterList;
+    }
+
+    public void setParameterList(ArrayList<ParameterData> parameterList) {
+        this.parameterList = parameterList;
+    }
+
     @Override
     public String toString() {
         return "SemanticData{" +
                 "identifier='" + identifier + '\'' +
                 ", kind='" + kind + '\'' +
+                ", type='" + type + '\'' +
+                ", parameterList=" + parameterList +
                 '}';
     }
 }

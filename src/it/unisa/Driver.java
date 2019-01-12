@@ -20,7 +20,7 @@ public class Driver {
         ProgrammaNode root = null;
         try {
             System.out.println("\nParsing... ");
-            root = parse("programmaErroriScope.yaspl");
+            root = parse("programmaErroriType.yaspl");
             System.out.println("Parsing successful!");
         } catch (Exception e) {
             System.out.println("Parsing error.");

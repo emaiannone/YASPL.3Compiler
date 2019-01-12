@@ -167,6 +167,6 @@ public class TypeChecker extends SemanticChecker {
         return null;
     }
 
-    //TODO In particolare il fatto di ReadOpNode che controlla se la lista di ArgsNode siano solo IdentifierNode e non ConstantNode o OpNode
-    //TODO CallOp: check correttezza parametri!!!!!! (visitatore ad hoc?)
+    //TODO In particolare il fatto di ReadOpNode che controlla se la lista di ArgsNode siano solo IdentifierNode e non altri fratelli
+    //TODO CallOp: check correttezza parametri!!!!!! (consultare la tabella dei simboli?)
 }
