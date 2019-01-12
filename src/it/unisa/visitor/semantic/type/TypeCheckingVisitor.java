@@ -13,8 +13,8 @@ import it.unisa.ast.statement.AssignOpNode;
 import it.unisa.ast.statement.CallOpNode;
 import it.unisa.ast.statement.ReadOpNode;
 import it.unisa.ast.statement.conditional.ConditionalStatementNode;
-import it.unisa.semantic.typing.TypeChecker;
-import it.unisa.semantic.typing.TypeSystem;
+import it.unisa.seman.typing.TypeChecker;
+import it.unisa.seman.typing.TypeSystem;
 import it.unisa.visitor.semantic.SemanticVisitor;
 
 import java.util.ArrayList;

@@ -2,31 +2,29 @@ head
     int scelta = 1;
     double primoNumero, secondoNumero, risultato;
 
-    def wrongMath() {
-        bool b;
-
-        scelta = scelta + true;
-        scelta = scelta - "";
-        scelta = - 'c';
-        b = 2;
-        if ("ciao" < 'c') then {
-        }
-        while (2) do {
-        }
-        if("vero") then {
-        } else {
-        }
-    }
-
     def wrongProcedure(in int first, out int second, in char third) {
 
     }
 
-    def mostraMenu() {
+    def wrongMath() {
+        bool wrongBool;
+
+        scelta = scelta + true;
+        scelta = scelta / "";
+        scelta = - 'c';
+        wrongBool = 2;
+
+        if ("ciao" < 'c') then {}
+        while (2) do {}
+        if("vero") then {} else {}
+
         wrongProcedure();
         wrongProcedure(2.0, scelta + 2, true);
+        wrongProcedure <- ;
         2+2, scelta <- ;
+    }
 
+    def mostraMenu() {
         "0. Termina\n" ->;
         "1. Mostra il menu\n" ->;
         "2. Somma\n" ->;

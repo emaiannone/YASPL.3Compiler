@@ -1,4 +1,4 @@
-package it.unisa.semantic;
+package it.unisa.seman;
 
 import java.util.ArrayList;
 

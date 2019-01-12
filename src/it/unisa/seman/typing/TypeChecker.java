@@ -1,6 +1,7 @@
-package it.unisa.semantic.typing;
+package it.unisa.seman.typing;
 
 import it.unisa.ast.args.ArgsNode;
+import it.unisa.ast.declaration.procedure.ProcedureDeclarationNode;
 import it.unisa.ast.declaration.procedure.parameter.InNode;
 import it.unisa.ast.expression.ExpressionNode;
 import it.unisa.ast.expression.constant.*;
@@ -10,10 +11,9 @@ import it.unisa.ast.statement.CallOpNode;
 import it.unisa.ast.statement.ReadOpNode;
 import it.unisa.ast.statement.conditional.ConditionalStatementNode;
 import it.unisa.ast.type.*;
-import it.unisa.semantic.ParameterData;
-import it.unisa.semantic.SemanticChecker;
-import it.unisa.semantic.SemanticData;
-import it.unisa.semantic.SymbolTable;
+import it.unisa.seman.ParameterData;
+import it.unisa.seman.SemanticChecker;
+import it.unisa.seman.SemanticData;
 
 import java.util.ArrayList;
 
@@ -68,8 +68,7 @@ public class TypeChecker extends SemanticChecker {
 
     // Partial Check E
     public void assignType(IdentifierNode n) {
-        SymbolTable st = getSymbolTable();
-        SemanticData semanticData = st.lookup((String) n.data());
+        SemanticData semanticData = getSymbolTable().lookup((String) n.data());
         if (semanticData != null) {
             n.setType(semanticData.getType());
         } else {
@@ -198,7 +197,12 @@ public class TypeChecker extends SemanticChecker {
         ArgsNode varList = (ArgsNode) n.getChild(0);
         for (int i = 0; i < varList.childrenNumber(); i++) {
             ExpressionNode var = (ExpressionNode) varList.getChild(i);
-            if (!(var instanceof IdentifierNode)) {
+            if (var instanceof IdentifierNode) {
+                String kind = getSymbolTable().lookup((String) var.data()).getKind();
+                if (kind.equals(ProcedureDeclarationNode.PROCEDURE)) {
+                    errors.add(TYPE_MISMATCH_READ);
+                }
+            } else {
                 errors.add(TYPE_MISMATCH_READ);
             }
         }

@@ -1,4 +1,4 @@
-package it.unisa.semantic;
+package it.unisa.seman;
 
 import java.util.Iterator;
 import java.util.Stack;
@@ -55,5 +55,12 @@ public class SymbolTable {
 
     public int size() {
         return stack.size();
+    }
+
+    @Override
+    public String toString() {
+        return "SymbolTable{" +
+                "stack=" + stack +
+                '}';
     }
 }

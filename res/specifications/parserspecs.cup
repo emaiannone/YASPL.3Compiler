@@ -37,17 +37,17 @@ parser code {:
     }
 :}
 
-/* Define how the parser must use the lexer! */
+// Define how the parser must use the lexer!
 scan with {: return lexer.next_token(); :};
 
-/* Terminals (tokens returned by the lexer, but also virtual terminals).
+/*
+    Terminals (tokens returned by the lexer, but also virtual terminals).
     Here you can specify the attribute bounded to the token
 */
 terminal HEAD, START, SEMI, INT, BOOL, DOUBLE, STRING, CHAR, COMMA;
 terminal String ID;             // Stores the value
 terminal DEF, LPAR, RPAR, LGPAR, RGPAR, IN, OUT, INOUT;
-// UMINUS is virtual
-terminal READ, WRITE, PLUS, MINUS, UMINUS, TIMES, DIV;
+terminal READ, WRITE, PLUS, MINUS, UMINUS, TIMES, DIV;  // UMINUS is virtual
 terminal Integer INT_CONST;     // Stores the int value
 terminal Double DOUBLE_CONST;   // Stores the double value
 terminal String STRING_CONST;   // Stores the string value
@@ -57,7 +57,8 @@ terminal TRUE, FALSE, ASSIGN;
 terminal IF, THEN, ELSE, WHILE, DO;
 terminal GT, GE, LT, LE, EQ, NOT, AND, OR;
 
-/* Non terminals, here you can specify the attribute bounded to the non terminals
+/*
+    Non terminals, here you can specify the attribute bounded to the non terminals
     The attributes are typically nodes of the AST
 */
 non terminal ProgrammaNode Programma;
@@ -79,14 +80,11 @@ non terminal StatementListNode Statements, Comp_stat;
 non terminal StatementNode Stat;
 non terminal ArgsNode Args;
 non terminal ExpressionNode Expr;
-//non terminal ArithOpNode Arith_op;
-//non terminal BoolOpNode Bool_op;
-//non terminal RelOpNode Rel_op;
 
 // Easy Empty string modelling.
 non terminal empty;
 
-/* Precedences */
+// Precedences
 precedence left OR;
 precedence left AND;
 precedence left GT, GE, LT, LE, EQ;
@@ -96,12 +94,10 @@ precedence left UMINUS;
 precedence left NOT;
 precedence left RPAR;
 
-/* Starting non terminal */
+// Starting non terminal
 start with Programma;
 
-/* Grammar rules */
-
-////////////////////////////////////////// General structure //////////////////////////////////////////
+// Grammar rules
 Programma ::= HEAD Decls: d START Statements: s     {: ProgrammaNode p = new ProgrammaNode(); p.add(d); p.add(s); RESULT = p; :}
 ;
 // Lista di definizione di funzioni e di var globali
@@ -110,7 +106,6 @@ Decls ::= Var_decl: v Decls: l                      {: DeclarationListNode n = n
     | empty                                         {: RESULT = new DeclarationListNode(); :}
 ;
 
-////////////////////////////////////////// Variable declaration //////////////////////////////////////////
 // Lista di dichiarazione ed eventuale inizializzazione di una lista di variabili di un certo tipo
 Var_decls ::= Var_decl: v Var_decls: l              {: VarDeclarationListNode n = new VarDeclarationListNode(); n.add(v); if (!l.subtrees().isEmpty()) {n.addSubtrees((LinkedHashSet<MyNode>) l.subtrees());} RESULT = n; :}
     | empty                                         {: RESULT = new VarDeclarationListNode(); :}
@@ -149,7 +144,6 @@ Par_type ::= IN                                                 {: RESULT = new 
     | INOUT                                                     {: RESULT = new InOutNode(); :}
 ;
 
-////////////////////////////////////////// Body of procedures //////////////////////////////////////////
 // Corpo di una funzione
 Body ::= LGPAR Var_decls: v Statements: s RGPAR             {: BodyNode n = new BodyNode(); n.add(v); n.add(s); RESULT = n; :}
 ;
@@ -161,7 +155,6 @@ Statements ::= Stat: s Statements: l                        {: StatementListNode
 Comp_stat ::= LGPAR Statements: l RGPAR                     {: RESULT = l; :}
 ;
 
-////////////////////////////////////////// Expressions and operations //////////////////////////////////////////
 // Statement singolo
 // Vars è stato cambiato in Args: si rimanda all'analisi semantica se la read prende solo una lista di ID e non di espressioni
 Stat ::= Args: a READ SEMI                                          {: ReadOpNode n = new ReadOpNode(); n.add(a); RESULT = n; :}
@@ -209,44 +202,10 @@ Expr ::= Expr: e1 PLUS Expr: e2         {: PlusOpNode op = new PlusOpNode(); op.
     where n il the # of symbols in the production
 */
 
-/* Javacup possible bug: in the generated parser class, there will be an error in the case of the empty reduction in a statement like this:
-   CUP$Parser$result = parser.getSymbolFactory().newSymbol("empty", 19, ((java_cup.runtime.Symbol) CUP$Parser$stack.getCurrentScope()), ((java_cup.runtime.Symbol) CUP$Parser$stack.getCurrentScope()), RESULT);
-   In order to fix this add an extra parameter after the second one. This parameter is the same of the second one.
+/*
+    Javacup possible bug: in the generated parser class, there will be an error in the case of the empty reduction in a statement like this:
+    CUP$Parser$result = parser.getSymbolFactory().newSymbol("empty", 19, ((java_cup.runtime.Symbol) CUP$Parser$stack.getCurrentScope()), ((java_cup.runtime.Symbol) CUP$Parser$stack.getCurrentScope()), RESULT);
+    In order to fix this add an extra parameter after the second one. This parameter is the same of the second one.
 */
 empty ::=
 ;
-
-/*
-// Espressione (molto generica)
-Expr ::= Expr: e1 Arith_op: op Expr: e2 {: System.out.println(op.getXMLTag()); op.add(e1); op.add(e2); RESULT = op; :}
-    | Expr: e1 Bool_op: op Expr: e2     {: op.add(e1); op.add(e2); RESULT = op; :}
-    | Expr: e1 Rel_op: op Expr: e2      {: op.add(e1); op.add(e2); RESULT = op; :}
-    | MINUS Expr: e	                    {: UminusOpNode n = new UminusOpNode(); n.add(e); RESULT = n; :} %prec UMINUS
-    | NOT Expr: e                       {: NotOpNode n = new NotOpNode(); n.add(e); RESULT = n; :}
-    | LPAR Expr: e RPAR                 {: RESULT = e; :}
-    | TRUE                              {: RESULT = new TrueNode(); :}
-    | FALSE                             {: RESULT = new FalseNode(); :}
-    | ID: value                         {: RESULT = new IdentifierNode(value); :}
-    | INT_CONST: value                  {: RESULT = new IntegerConstantNode(value); :}
-    | DOUBLE_CONST: value               {: RESULT = new DoubleConstantNode(value); :}
-    | CHAR_CONST: value                 {: RESULT = new CharConstantNode(value); :}
-    | STRING_CONST: value               {: RESULT = new StringConstantNode(value); :}
-;
-// Operatori aritmetici binari
-Arith_op ::= PLUS                       {: RESULT = new PlusOpNode(); :}
-    | MINUS                             {: RESULT = new MinusOpNode(); :}
-    | TIMES                             {: RESULT = new TimesOpNode(); :}
-    | DIV                               {: RESULT = new DivOpNode(); :}
-;
-// Operatori aritmetici binari
-Bool_op ::= AND                         {: RESULT = new AndOpNode(); :}
-    | OR                                {: RESULT = new OrOpNode(); :}
-;
-// Operatori relazionali binari
-Rel_op ::= GT                           {: RESULT = new GTOpNode(); :}
-    | GE                                {: RESULT = new GEOpNode(); :}
-    | LT                                {: RESULT = new LTOpNode(); :}
-    | LE                                {: RESULT = new LEOpNode(); :}
-    | EQ                                {: RESULT = new EQOpNode(); :}
-;
-*/

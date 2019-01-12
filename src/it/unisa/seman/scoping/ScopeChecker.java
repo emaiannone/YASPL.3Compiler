@@ -1,4 +1,4 @@
-package it.unisa.semantic.scoping;
+package it.unisa.seman.scoping;
 
 import it.unisa.ast.declaration.DeclarationNode;
 import it.unisa.ast.declaration.procedure.parameter.ParDeclarationNode;
@@ -6,9 +6,9 @@ import it.unisa.ast.declaration.procedure.parameter.ParTypeNode;
 import it.unisa.ast.expression.identifier.IdentifierNode;
 import it.unisa.ast.statement.StatementNode;
 import it.unisa.ast.type.TypeNode;
-import it.unisa.semantic.ParameterData;
-import it.unisa.semantic.SemanticChecker;
-import it.unisa.semantic.SemanticData;
+import it.unisa.seman.ParameterData;
+import it.unisa.seman.SemanticChecker;
+import it.unisa.seman.SemanticData;
 import it.unisa.visitor.semantic.scope.identifier.IdentifierDeclarationVisitor;
 import it.unisa.visitor.semantic.scope.identifier.IdentifierVisitor;
 import it.unisa.visitor.semantic.scope.parameter.FormalParameterVisitor;

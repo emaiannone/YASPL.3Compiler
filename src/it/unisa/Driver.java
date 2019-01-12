@@ -20,14 +20,14 @@ public class Driver {
         ProgrammaNode root = null;
         try {
             System.out.println("\nParsing... ");
-            root = parse("programmaErroriType.yaspl");
+            root = parse("res/ProgramTests/programmaErroriType.yaspl");
             System.out.println("Parsing successful!");
         } catch (Exception e) {
             System.out.println("Parsing error.");
         }
         try {
             if (root != null) {
-                writeToFile("AST.xml", getXML(root));
+                writeToFile("res/outxml/AST.xml", getXML(root));
             }
         } catch (FileNotFoundException e) {
             System.out.println("Writing to XML file error.");
@@ -45,6 +45,9 @@ public class Driver {
                     ArrayList<String> typeErrors = (ArrayList<String>) root.accept(tcv);
                     if (typeErrors.isEmpty()) {
                         System.out.println("Type checking successful!");
+
+                        //TODO Lanciare visitor che genera il codice C
+
                     } else {
                         System.out.println("Type checking failed:");
                         for (String e : typeErrors) {
@@ -66,7 +69,7 @@ public class Driver {
     }
 
     private static String getTokenStream(String fileName) throws IOException {
-        Yylex yylex = new Yylex(new FileReader("src/testPrograms/" + fileName));
+        Yylex yylex = new Yylex(new FileReader(fileName));
         int s;
         StringBuilder string = new StringBuilder();
         do {
@@ -78,7 +81,7 @@ public class Driver {
     }
 
     private static ProgrammaNode parse(String fileName) throws Exception {
-        Yylex yylex = new Yylex(new FileReader("src/testPrograms/" + fileName));
+        Yylex yylex = new Yylex(new FileReader(fileName));
 
         Parser p = new Parser(yylex);
 
@@ -92,7 +95,7 @@ public class Driver {
     }
 
     private static void writeToFile(String fileName, String content) throws FileNotFoundException {
-        PrintWriter xmlAST = new PrintWriter("src/ASTs/" + fileName);
+        PrintWriter xmlAST = new PrintWriter(fileName);
         xmlAST.print(content);
         xmlAST.close();
     }

@@ -1,4 +1,4 @@
-package it.unisa.semantic;
+package it.unisa.seman;
 
 import java.util.HashMap;
 
@@ -12,5 +12,12 @@ public class ScopeTable {
 
     public HashMap<String, SemanticData> getTable() {
         return table;
+    }
+
+    @Override
+    public String toString() {
+        return "ScopeTable{" +
+                "table=" + table +
+                '}';
     }
 }

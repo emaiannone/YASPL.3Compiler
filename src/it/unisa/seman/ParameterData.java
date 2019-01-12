@@ -1,4 +1,4 @@
-package it.unisa.semantic;
+package it.unisa.seman;
 
 public class ParameterData {
     private String parType;

@@ -1,4 +1,4 @@
-package it.unisa.semantic;
+package it.unisa.seman;
 
 import it.unisa.ast.MyNode;
 import it.unisa.ast.declaration.procedure.ProcedureDeclarationNode;

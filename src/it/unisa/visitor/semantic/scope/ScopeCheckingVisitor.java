@@ -10,7 +10,7 @@ import it.unisa.ast.statement.CallOpNode;
 import it.unisa.ast.statement.ReadOpNode;
 import it.unisa.ast.statement.StatementNode;
 import it.unisa.ast.statement.conditional.ConditionalStatementNode;
-import it.unisa.semantic.scoping.ScopeChecker;
+import it.unisa.seman.scoping.ScopeChecker;
 import it.unisa.visitor.semantic.SemanticVisitor;
 
 import java.util.ArrayList;

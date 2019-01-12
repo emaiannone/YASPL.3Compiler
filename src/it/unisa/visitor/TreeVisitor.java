@@ -38,11 +38,11 @@ public abstract class TreeVisitor implements MyVisitor {
      * @return An ArrayList of String containing the error messages
      */
     protected Object visitSubtree(MyNode n) {
-        ArrayList<String> result = new ArrayList<>();
+        ArrayList<Object> result = new ArrayList<>();
 
         if (n.hasChildren()) {
             for (MyNode c : n.children()) {
-                ArrayList<String> subResult = (ArrayList<String>) c.accept(this);
+                ArrayList<Object> subResult = (ArrayList<Object>) c.accept(this);
                 if (subResult != null) {
                     result.addAll(subResult);
                 }

@@ -1,4 +1,4 @@
-package it.unisa.semantic.typing;
+package it.unisa.seman.typing;
 
 import it.unisa.ast.type.*;
 
