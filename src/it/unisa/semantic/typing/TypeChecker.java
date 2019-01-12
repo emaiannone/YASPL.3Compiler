@@ -1,14 +1,21 @@
 package it.unisa.semantic.typing;
 
+import it.unisa.ast.args.ArgsNode;
+import it.unisa.ast.declaration.procedure.parameter.InNode;
 import it.unisa.ast.expression.ExpressionNode;
 import it.unisa.ast.expression.constant.*;
 import it.unisa.ast.expression.identifier.IdentifierNode;
 import it.unisa.ast.statement.AssignOpNode;
+import it.unisa.ast.statement.CallOpNode;
+import it.unisa.ast.statement.ReadOpNode;
 import it.unisa.ast.statement.conditional.ConditionalStatementNode;
 import it.unisa.ast.type.*;
+import it.unisa.semantic.ParameterData;
 import it.unisa.semantic.SemanticChecker;
 import it.unisa.semantic.SemanticData;
 import it.unisa.semantic.SymbolTable;
+
+import java.util.ArrayList;
 
 /*
 Type Check D.
@@ -28,6 +35,10 @@ public class TypeChecker extends SemanticChecker {
     public static final String TYPE_MISMATCH_EXPRESSION = "Type mismatch on expression: ";
     public static final String TYPE_MISMATCH_ASSIGN = "Type mismatch on assign: ";
     public static final String TYPE_MISMATCH_CONDITIONAL = "Type mismatch on condition: it cannot be a ";
+    public static final String NUMBER_MISMATCH_PARAMETER = "Number of parameters on procedure call is invalid";
+    public static final String TYPE_MISMATCH_CALL = "Type mismatch on procedure call: ";
+    public static final String TYPE_MISMATCH_PARAMETER = "Cannot pass a non identifier to an output parameter on procedure call ";
+    public static final String TYPE_MISMATCH_READ = "Cannot read a non identifier ";
     public static final String NO_TYPE = "Cannot apply type checking on nodes without a type";
 
     //Type Check D
@@ -69,14 +80,9 @@ public class TypeChecker extends SemanticChecker {
     // TODO Farsi passare dal visitor una stringa riportante il nome dell'operazione?
     // Partial Type Check E. It checks the two children types or the first child type, according to the number of children
     public String assignType(ExpressionNode n, int[][] typeTable) {
-        //TODO Remove
-        System.out.println(n);
-
         ExpressionNode firstChild = (ExpressionNode) n.getChild(0);
         String firstType = firstChild.getType();
         if (firstType == null) {
-            //TODO Remove
-            System.out.println("Error: " + NO_TYPE);
             return NO_TYPE;
         }
         int row = TypeSystem.stringToInt(firstType);
@@ -87,8 +93,6 @@ public class TypeChecker extends SemanticChecker {
             // Executed for Binary Operations
             secondType = secondChild.getType();
             if (secondType == null) {
-                //TODO Remove
-                System.out.println("Error: " + NO_TYPE);
                 return NO_TYPE;
             }
             column = TypeSystem.stringToInt(secondType);
@@ -96,77 +100,111 @@ public class TypeChecker extends SemanticChecker {
         String type = TypeSystem.intToString(typeTable[row][column]);
         if (type == null) {
             if (secondType != null) {
-                //TODO Remove
-                System.out.println(TYPE_MISMATCH_EXPRESSION + firstType + " and " + secondType + " are incompatible with this operation");
                 return TYPE_MISMATCH_EXPRESSION + firstType + " and " + secondType + " are incompatible with this operation";
             } else {
-                //TODO Remove
-                System.out.println(TYPE_MISMATCH_EXPRESSION + firstType + " is incompatible with this operation");
                 return TYPE_MISMATCH_EXPRESSION + firstType + " is incompatible with this operation";
             }
         }
-        //TODO Remove
-        System.out.println("Type set: " + type);
         n.setType(type);
         return null;
     }
 
     public String assignType(AssignOpNode n) {
-        //TODO Remove
-        System.out.println(n);
-
         ExpressionNode firstChild = (ExpressionNode) n.getChild(0);
         String firstType = firstChild.getType();
         if (firstType == null) {
-            //TODO Remove
-            System.out.println("Error: " + NO_TYPE);
             return NO_TYPE;
         }
         ExpressionNode secondChild = (ExpressionNode) n.getChild(1);
         String secondType = secondChild.getType();
         if (secondType == null) {
-            //TODO Remove
-            System.out.println("Error: " + NO_TYPE);
             return NO_TYPE;
         }
         int row = TypeSystem.stringToInt(firstType);
         int column = TypeSystem.stringToInt(secondType);
         String type = TypeSystem.intToString(TypeSystem.assignTable[row][column]);
         if (type == null) {
-            //TODO Remove
-            System.out.println(TYPE_MISMATCH_ASSIGN + secondType + " cannot be assigned to a " + firstType);
             return TYPE_MISMATCH_ASSIGN + secondType + " cannot be assigned to a " + firstType;
         }
-        //TODO Remove
-        System.out.println("Type set: " + type);
         n.setType(type);
         return null;
     }
 
     public String assignType(ConditionalStatementNode n) {
-        //TODO Remove
-        System.out.println(n);
-
         ExpressionNode firstChild = (ExpressionNode) n.getChild(0);
         String firstType = firstChild.getType();
         if (firstType == null) {
-            //TODO Remove
-            System.out.println("Error: " + NO_TYPE);
             return NO_TYPE;
         }
         int row = TypeSystem.stringToInt(firstType);
         String type = TypeSystem.intToString(TypeSystem.conditionalTable[row][0]);
         if (type == null) {
-            //TODO Remove
-            System.out.println(TYPE_MISMATCH_CONDITIONAL + firstType);
             return TYPE_MISMATCH_CONDITIONAL + firstType;
         }
-        //TODO Remove
-        System.out.println("Type set: " + type);
         n.setType(type);
         return null;
     }
 
-    //TODO In particolare il fatto di ReadOpNode che controlla se la lista di ArgsNode siano solo IdentifierNode e non altri fratelli
-    //TODO CallOp: check correttezza parametri!!!!!! (consultare la tabella dei simboli?)
+    public ArrayList<String> assignType(CallOpNode n) {
+        ArrayList<String> errors = new ArrayList<>();
+
+        ArgsNode actualParameters = (ArgsNode) n.getChild(1);
+        String procedureName = (String) n.getChild(0).data();
+        ArrayList<ParameterData> formalParameters = getSymbolTable().lookup(procedureName).getParameterList();
+
+        // Parameter number check
+        int formalNumber;
+        if (formalParameters == null) {
+            formalNumber = 0;
+        } else {
+            formalNumber = formalParameters.size();
+        }
+        int actualNumber;
+        if (actualParameters == null) {
+            actualNumber = 0;
+        } else {
+            actualNumber = actualParameters.childrenNumber();
+        }
+        if (formalNumber != actualNumber) {
+            errors.add(NUMBER_MISMATCH_PARAMETER);
+        } else {
+            for (int i = 0; i < formalNumber; i++) {
+                ParameterData formalPar = formalParameters.get(i);
+                ExpressionNode actualPar = (ExpressionNode) actualParameters.getChild(i);
+
+                // Type check that reuses the assignTable
+                int row = TypeSystem.stringToInt(formalPar.getType());
+                int column = TypeSystem.stringToInt(actualPar.getType());
+                String type = TypeSystem.intToString(TypeSystem.assignTable[row][column]);
+                if (type == null) {
+                    errors.add(TYPE_MISMATCH_CALL + actualPar.getType() + " cannot be assigned to a " + formalPar.getType());
+                } else {
+                    // ParType check. We have error if the formal par is out or inout and actual is a non identifier
+                    if (!formalPar.getParType().equals(InNode.IN) && !(actualPar instanceof IdentifierNode)) {
+                        errors.add(TYPE_MISMATCH_PARAMETER);
+                    }
+                }
+            }
+        }
+        if (errors.isEmpty()) {
+            n.setType(TypeNode.VOID);
+        }
+        return errors;
+    }
+
+    public ArrayList<String> assignType(ReadOpNode n) {
+        ArrayList<String> errors = new ArrayList<>();
+
+        ArgsNode varList = (ArgsNode) n.getChild(0);
+        for (int i = 0; i < varList.childrenNumber(); i++) {
+            ExpressionNode var = (ExpressionNode) varList.getChild(i);
+            if (!(var instanceof IdentifierNode)) {
+                errors.add(TYPE_MISMATCH_READ);
+            }
+        }
+        if (errors.isEmpty()) {
+            n.setType(TypeNode.VOID);
+        }
+        return errors;
+    }
 }

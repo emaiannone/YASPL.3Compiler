@@ -20,6 +20,8 @@ import it.unisa.ast.list.VarInitListNode;
 import it.unisa.ast.programma.ProgrammaNode;
 import it.unisa.ast.statement.AssignOpNode;
 import it.unisa.ast.list.BodyNode;
+import it.unisa.ast.statement.CallOpNode;
+import it.unisa.ast.statement.ReadOpNode;
 import it.unisa.ast.statement.StatementNode;
 import it.unisa.ast.statement.conditional.ConditionalStatementNode;
 import it.unisa.ast.type.TypeNode;
@@ -78,6 +80,10 @@ public interface MyVisitor {
     Object visit(AssignOpNode n);
 
     Object visit(ConditionalStatementNode n);
+
+    Object visit(CallOpNode n);
+
+    Object visit(ReadOpNode n);
 
     Object visit(BodyNode n);
 

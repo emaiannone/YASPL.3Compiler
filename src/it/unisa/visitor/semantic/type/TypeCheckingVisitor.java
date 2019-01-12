@@ -10,6 +10,8 @@ import it.unisa.ast.expression.operation.unary.NotOpNode;
 import it.unisa.ast.expression.operation.unary.UminusOpNode;
 import it.unisa.ast.programma.ProgrammaNode;
 import it.unisa.ast.statement.AssignOpNode;
+import it.unisa.ast.statement.CallOpNode;
+import it.unisa.ast.statement.ReadOpNode;
 import it.unisa.ast.statement.conditional.ConditionalStatementNode;
 import it.unisa.semantic.typing.TypeChecker;
 import it.unisa.semantic.typing.TypeSystem;
@@ -33,6 +35,14 @@ public class TypeCheckingVisitor extends SemanticVisitor {
         return result;
     }
 
+    private ArrayList<String> buildResult(ArrayList<String> subResult, ArrayList<String> newResult) {
+        ArrayList<String> result = new ArrayList<>(subResult);
+        if (newResult != null) {
+            result.addAll(newResult);
+        }
+        return result;
+    }
+
     @Override
     public Object visit(ProgrammaNode n) {
         typeChecker.startScope(n);
@@ -49,6 +59,42 @@ public class TypeCheckingVisitor extends SemanticVisitor {
         typeChecker.endCurrentScope();
 
         return new ArrayList<>(subResult);
+    }
+
+    @Override
+    public Object visit(IntegerConstantNode n) {
+        typeChecker.assignType(n);
+        return null;
+    }
+
+    @Override
+    public Object visit(DoubleConstantNode n) {
+        typeChecker.assignType(n);
+        return null;
+    }
+
+    @Override
+    public Object visit(StringConstantNode n) {
+        typeChecker.assignType(n);
+        return null;
+    }
+
+    @Override
+    public Object visit(CharConstantNode n) {
+        typeChecker.assignType(n);
+        return null;
+    }
+
+    @Override
+    public Object visit(BoolConstantNode n) {
+        typeChecker.assignType(n);
+        return null;
+    }
+
+    @Override
+    public Object visit(IdentifierNode n) {
+        typeChecker.assignType(n);
+        return null;
     }
 
     @Override
@@ -94,38 +140,14 @@ public class TypeCheckingVisitor extends SemanticVisitor {
     }
 
     @Override
-    public Object visit(IntegerConstantNode n) {
-        typeChecker.assignType(n);
-        return null;
+    public Object visit(CallOpNode n) {
+        // It first goes to the inductive base to calculate the type of the inner-most operations
+        return buildResult((ArrayList<String>) visitSubtree(n), typeChecker.assignType(n));
     }
 
     @Override
-    public Object visit(DoubleConstantNode n) {
-        typeChecker.assignType(n);
-        return null;
-    }
-
-    @Override
-    public Object visit(StringConstantNode n) {
-        typeChecker.assignType(n);
-        return null;
-    }
-
-    @Override
-    public Object visit(CharConstantNode n) {
-        typeChecker.assignType(n);
-        return null;
-    }
-
-    @Override
-    public Object visit(BoolConstantNode n) {
-        typeChecker.assignType(n);
-        return null;
-    }
-
-    @Override
-    public Object visit(IdentifierNode n) {
-        typeChecker.assignType(n);
-        return null;
+    public Object visit(ReadOpNode n) {
+        // It first goes to the inductive base to calculate the type of the inner-most operations
+        return buildResult((ArrayList<String>) visitSubtree(n), typeChecker.assignType(n));
     }
 }

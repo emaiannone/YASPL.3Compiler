@@ -18,8 +18,15 @@ head
         }
     }
 
+    def wrongProcedure(in int first, out int second, in char third) {
+
+    }
+
     def mostraMenu() {
-        wrongMath(2);
+        wrongProcedure();
+        wrongProcedure(2.0, scelta + 2, true);
+        2+2, scelta <- ;
+
         "0. Termina\n" ->;
         "1. Mostra il menu\n" ->;
         "2. Somma\n" ->;

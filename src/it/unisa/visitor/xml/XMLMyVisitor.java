@@ -20,6 +20,8 @@ import it.unisa.ast.list.BodyNode;
 import it.unisa.ast.list.VarInitListNode;
 import it.unisa.ast.programma.ProgrammaNode;
 import it.unisa.ast.statement.AssignOpNode;
+import it.unisa.ast.statement.CallOpNode;
+import it.unisa.ast.statement.ReadOpNode;
 import it.unisa.ast.statement.StatementNode;
 import it.unisa.ast.statement.conditional.ConditionalStatementNode;
 import it.unisa.ast.type.TypeNode;
@@ -198,6 +200,16 @@ public class XMLMyVisitor implements MyVisitor {
 
     @Override
     public Object visit(ConditionalStatementNode n) {
+        return visit((MyNode) n);
+    }
+
+    @Override
+    public Object visit(CallOpNode n) {
+        return visit((MyNode) n);
+    }
+
+    @Override
+    public Object visit(ReadOpNode n) {
         return visit((MyNode) n);
     }
 

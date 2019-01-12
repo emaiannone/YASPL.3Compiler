@@ -40,7 +40,17 @@ public class Driver {
 
                 if (scopeErrors.isEmpty()) {
                     System.out.println("Scope checking successful!");
-                    //TODO Move TypeChecking code here
+                    System.out.println("\nStarting type checking...");
+                    TypeCheckingVisitor tcv = new TypeCheckingVisitor();
+                    ArrayList<String> typeErrors = (ArrayList<String>) root.accept(tcv);
+                    if (typeErrors.isEmpty()) {
+                        System.out.println("Type checking successful!");
+                    } else {
+                        System.out.println("Type checking failed:");
+                        for (String e : typeErrors) {
+                            System.out.println('\t' + e);
+                        }
+                    }
                 } else {
                     System.out.println("Scope checking failed:");
                     //scopeErrors.removeAll(Collections.singleton(null));  // Discards the null elements
@@ -48,20 +58,9 @@ public class Driver {
                         System.out.println('\t' + e);
                     }
                 }
-
-                System.out.println("\nStarting type checking...");
-                TypeCheckingVisitor tcv = new TypeCheckingVisitor();
-                ArrayList<String> typeErrors = (ArrayList<String>) root.accept(tcv);
-                if (typeErrors.isEmpty()) {
-                    System.out.println("Type checking successful!");
-                } else {
-                    System.out.println("Type checking failed:");
-                    for (String e : typeErrors) {
-                        System.out.println('\t' + e);
-                    }
-                }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Checking error.");
         }
     }

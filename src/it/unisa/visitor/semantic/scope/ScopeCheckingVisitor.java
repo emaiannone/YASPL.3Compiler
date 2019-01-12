@@ -6,6 +6,8 @@ import it.unisa.ast.declaration.procedure.parameter.ParDeclarationNode;
 import it.unisa.ast.declaration.variable.VarDeclarationNode;
 import it.unisa.ast.programma.ProgrammaNode;
 import it.unisa.ast.statement.AssignOpNode;
+import it.unisa.ast.statement.CallOpNode;
+import it.unisa.ast.statement.ReadOpNode;
 import it.unisa.ast.statement.StatementNode;
 import it.unisa.ast.statement.conditional.ConditionalStatementNode;
 import it.unisa.semantic.scoping.ScopeChecker;
@@ -79,6 +81,16 @@ public class ScopeCheckingVisitor extends SemanticVisitor {
 
     @Override
     public Object visit(ConditionalStatementNode n) {
+        return visit((StatementNode) n);
+    }
+
+    @Override
+    public Object visit(CallOpNode n) {
+        return visit((StatementNode) n);
+    }
+
+    @Override
+    public Object visit(ReadOpNode n) {
         return visit((StatementNode) n);
     }
 }
