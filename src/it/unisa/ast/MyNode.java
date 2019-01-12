@@ -13,11 +13,21 @@ public abstract class MyNode extends ArrayMultiTreeNode<Object> {
     }
 
     public LinkedHashSet<MyNode> children() {
+        if (subtrees().isEmpty()) {
+            return null;
+        }
         return (LinkedHashSet<MyNode>) this.subtrees();
     }
 
+    public boolean hasChildren() {
+        return children() != null;
+    }
+
     public int childrenNumber() {
-        return children().size();
+        if (hasChildren()) {
+            return children().size();
+        }
+        return 0;
     }
 
     public MyNode getChild(int n) {

@@ -27,7 +27,6 @@ import it.unisa.ast.statement.conditional.ConditionalStatementNode;
 import it.unisa.ast.type.TypeNode;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 
 @SuppressWarnings("unchecked")
 public abstract class TreeVisitor implements MyVisitor {
@@ -40,15 +39,16 @@ public abstract class TreeVisitor implements MyVisitor {
      */
     protected Object visitSubtree(MyNode n) {
         ArrayList<String> result = new ArrayList<>();
-        if (!n.subtrees().isEmpty()) {
-            LinkedHashSet<MyNode> children = (LinkedHashSet<MyNode>) n.subtrees();
-            for (MyNode c : children) {
+
+        if (n.hasChildren()) {
+            for (MyNode c : n.children()) {
                 ArrayList<String> subResult = (ArrayList<String>) c.accept(this);
                 if (subResult != null) {
                     result.addAll(subResult);
                 }
             }
         }
+
         return result;
     }
 
