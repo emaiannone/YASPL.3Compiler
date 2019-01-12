@@ -7,11 +7,13 @@ head
         int sharedParameter;
 
         sharedParameter = 2;
-        sharedParameter = true;
-        nonVariable2 = nonVariable2 + nonVariable3 + nonVariable5;
-        nonVariable4 <-;
-        nonProcedure(nonParameter1, nonParameter2);
-        nonOut ->;
+        nonVariable1 = nonVariable2 + nonVariable3 + nonVariable4;
+        nonRead1 <-;
+        nonProcedure1(nonParameter1, nonParameter2);
+        nonOut1 + 2 ->;
+        if(nonCondition1) then {
+            nonOut2 ->;
+        }
     }
 
     def mostraMenu() {

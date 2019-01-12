@@ -52,4 +52,8 @@ public class SymbolTable {
     public boolean empty() {
         return stack.empty();
     }
+
+    public int size() {
+        return stack.size();
+    }
 }

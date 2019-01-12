@@ -19,6 +19,7 @@ head
     }
 
     def mostraMenu() {
+        wrongMath(2);
         "0. Termina\n" ->;
         "1. Mostra il menu\n" ->;
         "2. Somma\n" ->;

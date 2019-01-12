@@ -1,5 +1,7 @@
 package it.unisa.ast;
 
+import it.unisa.visitor.MyVisitor;
+
 public abstract class ExpressionStatementNode extends MyNode {
     private String type;
 
@@ -14,6 +16,11 @@ public abstract class ExpressionStatementNode extends MyNode {
 
     public String getType() {
         return type;
+    }
+
+    // Method to be visited by a Visitor
+    public Object accept(MyVisitor v) {
+        return v.visit(this);
     }
 
     @Override

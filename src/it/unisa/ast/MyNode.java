@@ -12,9 +12,12 @@ public abstract class MyNode extends ArrayMultiTreeNode<Object> {
         super(data);
     }
 
+    public LinkedHashSet<MyNode> children() {
+        return (LinkedHashSet<MyNode>) this.subtrees();
+    }
+
     public int childrenNumber() {
-        LinkedHashSet<MyNode> children = (LinkedHashSet<MyNode>) this.subtrees();
-        return children.size();
+        return children().size();
     }
 
     public MyNode getChild(int n) {

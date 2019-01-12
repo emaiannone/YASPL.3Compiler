@@ -18,14 +18,15 @@ import it.unisa.ast.expression.operation.unary.UminusOpNode;
 import it.unisa.ast.initialization.VarInitNode;
 import it.unisa.ast.list.VarInitListNode;
 import it.unisa.ast.programma.ProgrammaNode;
-import it.unisa.ast.statement.*;
-import it.unisa.ast.statement.conditional.IfThenElseOpNode;
-import it.unisa.ast.statement.conditional.IfThenOpNode;
-import it.unisa.ast.statement.conditional.WhileOpNode;
+import it.unisa.ast.statement.AssignOpNode;
+import it.unisa.ast.list.BodyNode;
+import it.unisa.ast.statement.StatementNode;
+import it.unisa.ast.statement.conditional.ConditionalStatementNode;
 import it.unisa.ast.type.TypeNode;
 
 // Interface for the visitor that is able to visit the tree of concrete MyNode(s)
 public interface MyVisitor {
+
     Object visit(MyNode n);
 
     Object visit(ProgrammaNode n);
@@ -76,11 +77,9 @@ public interface MyVisitor {
 
     Object visit(AssignOpNode n);
 
-    Object visit(WhileOpNode n);
+    Object visit(ConditionalStatementNode n);
 
-    Object visit(IfThenOpNode n);
-
-    Object visit(IfThenElseOpNode n);
+    Object visit(BodyNode n);
 
     Object visit(TypeNode n);
 }

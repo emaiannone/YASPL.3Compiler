@@ -13,16 +13,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 
 @SuppressWarnings("unchecked")
 public class Driver {
     public static void main(String[] args) {
-        //TODO Migliorare gestione errori del parser e dello scanning
         ProgrammaNode root = null;
         try {
             System.out.println("\nParsing... ");
-            root = parse("programmaErroriType.yaspl");
+            root = parse("programmaErroriScope.yaspl");
             System.out.println("Parsing successful!");
         } catch (Exception e) {
             System.out.println("Parsing error.");
@@ -42,9 +40,7 @@ public class Driver {
 
                 if (scopeErrors.isEmpty()) {
                     System.out.println("Scope checking successful!");
-
                     //TODO Move TypeChecking code here
-
                 } else {
                     System.out.println("Scope checking failed:");
                     //scopeErrors.removeAll(Collections.singleton(null));  // Discards the null elements

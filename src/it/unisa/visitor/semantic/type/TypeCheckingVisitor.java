@@ -10,9 +10,7 @@ import it.unisa.ast.expression.operation.unary.NotOpNode;
 import it.unisa.ast.expression.operation.unary.UminusOpNode;
 import it.unisa.ast.programma.ProgrammaNode;
 import it.unisa.ast.statement.AssignOpNode;
-import it.unisa.ast.statement.conditional.IfThenElseOpNode;
-import it.unisa.ast.statement.conditional.IfThenOpNode;
-import it.unisa.ast.statement.conditional.WhileOpNode;
+import it.unisa.ast.statement.conditional.ConditionalStatementNode;
 import it.unisa.semantic.typing.TypeChecker;
 import it.unisa.semantic.typing.TypeSystem;
 import it.unisa.visitor.semantic.SemanticVisitor;
@@ -27,19 +25,13 @@ public class TypeCheckingVisitor extends SemanticVisitor {
         typeChecker = new TypeChecker();
     }
 
-    /*
-    private ArrayList<String> assignType(ExpressionStatementNode n, int[][] typeTable) {
-        // It first goes to the inductive base to calculate the type of the inner-most operations
-        ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
-        String typeCheckResult = typeChecker.assignType(n, typeTable);
-
+    private ArrayList<String> buildResult(ArrayList<String> subResult, String newResult) {
         ArrayList<String> result = new ArrayList<>(subResult);
-        if (typeCheckResult != null) {
-            result.add(typeCheckResult);
+        if (newResult != null) {
+            result.add(newResult);
         }
         return result;
     }
-    */
 
     @Override
     public Object visit(ProgrammaNode n) {
@@ -62,121 +54,44 @@ public class TypeCheckingVisitor extends SemanticVisitor {
     @Override
     public Object visit(ArithOpNode n) {
         // It first goes to the inductive base to calculate the type of the inner-most operations
-        ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
-        String typeCheckResult = typeChecker.assignType(n, TypeSystem.arithTable);
-
-        ArrayList<String> result = new ArrayList<>(subResult);
-        if (typeCheckResult != null) {
-            result.add(typeCheckResult);
-        }
-        return result;
+        return buildResult((ArrayList<String>) visitSubtree(n), typeChecker.assignType(n, TypeSystem.arithTable));
     }
 
     @Override
     public Object visit(BoolOpNode n) {
         // It first goes to the inductive base to calculate the type of the inner-most operations
-        ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
-        String typeCheckResult = typeChecker.assignType(n, TypeSystem.boolTable);
-
-        ArrayList<String> result = new ArrayList<>(subResult);
-        if (typeCheckResult != null) {
-            result.add(typeCheckResult);
-        }
-        return result;
+        return buildResult((ArrayList<String>) visitSubtree(n), typeChecker.assignType(n, TypeSystem.boolTable));
     }
 
     @Override
     public Object visit(RelOpNode n) {
         // It first goes to the inductive base to calculate the type of the inner-most operations
-        ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
-        String typeCheckResult = typeChecker.assignType(n, TypeSystem.relationalTable);
-
-        ArrayList<String> result = new ArrayList<>(subResult);
-        if (typeCheckResult != null) {
-            result.add(typeCheckResult);
-        }
-        return result;
+        return buildResult((ArrayList<String>) visitSubtree(n), typeChecker.assignType(n, TypeSystem.relationalTable));
     }
 
     @Override
     public Object visit(UminusOpNode n) {
         // It first goes to the inductive base to calculate the type of the inner-most operations
-        ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
-        String typeCheckResult = typeChecker.assignType(n, TypeSystem.uminusTable);
-
-        ArrayList<String> result = new ArrayList<>(subResult);
-        if (typeCheckResult != null) {
-            result.add(typeCheckResult);
-        }
-        return result;
+        return buildResult((ArrayList<String>) visitSubtree(n), typeChecker.assignType(n, TypeSystem.uminusTable));
     }
 
     @Override
     public Object visit(NotOpNode n) {
         // It first goes to the inductive base to calculate the type of the inner-most operations
-        ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
-        String typeCheckResult = typeChecker.assignType(n, TypeSystem.notTable);
-
-        ArrayList<String> result = new ArrayList<>(subResult);
-        if (typeCheckResult != null) {
-            result.add(typeCheckResult);
-        }
-        return result;
+        return buildResult((ArrayList<String>) visitSubtree(n), typeChecker.assignType(n, TypeSystem.notTable));
     }
 
     @Override
     public Object visit(AssignOpNode n) {
         // It first goes to the inductive base to calculate the type of the inner-most operations
-        ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
-        String typeCheckResult = typeChecker.assignType(n);
-
-        ArrayList<String> result = new ArrayList<>(subResult);
-        if (typeCheckResult != null) {
-            result.add(typeCheckResult);
-        }
-        return result;
+        return buildResult((ArrayList<String>) visitSubtree(n), typeChecker.assignType(n));
     }
 
     @Override
-    public Object visit(WhileOpNode n) {
+    public Object visit(ConditionalStatementNode n) {
         // It first goes to the inductive base to calculate the type of the inner-most operations
-        ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
-        String typeCheckResult = typeChecker.assignType(n);
-
-        ArrayList<String> result = new ArrayList<>(subResult);
-        if (typeCheckResult != null) {
-            result.add(typeCheckResult);
-        }
-        return result;
+        return buildResult((ArrayList<String>) visitSubtree(n), typeChecker.assignType(n));
     }
-
-    @Override
-    public Object visit(IfThenOpNode n) {
-        // It first goes to the inductive base to calculate the type of the inner-most operations
-        ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
-        String typeCheckResult = typeChecker.assignType(n);
-
-        ArrayList<String> result = new ArrayList<>(subResult);
-        if (typeCheckResult != null) {
-            result.add(typeCheckResult);
-        }
-        return result;
-    }
-
-    @Override
-    public Object visit(IfThenElseOpNode n) {
-        // It first goes to the inductive base to calculate the type of the inner-most operations
-        ArrayList<String> subResult = (ArrayList<String>) visitSubtree(n);
-        String typeCheckResult = typeChecker.assignType(n);
-
-        ArrayList<String> result = new ArrayList<>(subResult);
-        if (typeCheckResult != null) {
-            result.add(typeCheckResult);
-        }
-        return result;
-    }
-
-    //TODO visite sui nodi While, IFThen e IfThenElse
 
     @Override
     public Object visit(IntegerConstantNode n) {

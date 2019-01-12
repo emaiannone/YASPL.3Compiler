@@ -20,6 +20,9 @@ import it.unisa.ast.initialization.VarInitNode;
 import it.unisa.ast.list.*;
 import it.unisa.ast.programma.ProgrammaNode;
 import it.unisa.ast.statement.*;
+import it.unisa.ast.statement.conditional.IfThenElseOpNode;
+import it.unisa.ast.statement.conditional.IfThenOpNode;
+import it.unisa.ast.statement.conditional.WhileOpNode;
 import it.unisa.ast.type.*;
 import it.unisa.lexer.Yylex;
 

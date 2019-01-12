@@ -1,16 +1,15 @@
-package it.unisa.ast.statement;
+package it.unisa.ast.list;
 
 import it.unisa.visitor.MyVisitor;
 
-public class WriteOpNode extends StatementNode {
+public class BodyNode extends ListNode {
 
     // Method to be visited by a Visitor
-    @Override
     public Object accept(MyVisitor v) {
         return v.visit(this);
     }
 
     public String getXMLTag() {
-        return "WriteOpNode";
+        return "BodyNode";
     }
 }
