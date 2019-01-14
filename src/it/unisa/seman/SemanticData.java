@@ -6,6 +6,7 @@ public class SemanticData {
     private String identifier;
     private String kind;
     private String type;
+    private String parType;
     private ArrayList<ParameterData> parameterList;
 
     public SemanticData() {
@@ -36,6 +37,14 @@ public class SemanticData {
         this.type = type;
     }
 
+    public String getParType() {
+        return parType;
+    }
+
+    public void setParType(String parType) {
+        this.parType = parType;
+    }
+
     public ArrayList<ParameterData> getParameterList() {
         return parameterList;
     }
@@ -50,6 +59,7 @@ public class SemanticData {
                 "identifier='" + identifier + '\'' +
                 ", kind='" + kind + '\'' +
                 ", type='" + type + '\'' +
+                ", parType='" + parType + '\'' +
                 ", parameterList=" + parameterList +
                 '}';
     }

@@ -67,6 +67,10 @@ public interface MyVisitor {
 
     Object visit(BoolConstantNode n);
 
+    Object visit(TrueNode n);
+
+    Object visit(FalseNode n);
+
     Object visit(IdentifierNode n);
 
     Object visit(OpNode n);

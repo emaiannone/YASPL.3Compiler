@@ -14,6 +14,7 @@ head
     bool esse, esse2;
 
     def mostraMenu() {
+        esse = true;
         "0. Termina\n" ->;
         "1. Mostra il menu\n" ->;
         "2. Somma\n" ->;
@@ -30,11 +31,12 @@ head
         }
     }
 
-    def inserisciNumeri(out double primo, out double secondo) {
+    def inserisciNumeri(out double primo, out double secondo, in int hello) {
+        primo = primo +1;
         "Inserisci il primo numero:" ->;
-        primoNumero <-;
+        primo <-;
         "Inserisci il secondo numero:" ->;
-        secondoNumero <-;
+        secondo <-;
     }
 
     def eseguiOperazione(in double primo, in double secondo, in int operazione, out double risultato) {
@@ -64,9 +66,9 @@ start
         if (scelta == 1) then {
             mostraMenu();
         } else {
-            inserisciNumeri(primoNumero, secondoNumero);
+            inserisciNumeri(primoNumero, secondoNumero, 2+2);
             eseguiOperazione(primoNumero, secondoNumero, scelta, risultato);
-            risultato ->;
+            risultato, 2+2 ->;
         }
         scegliOperazione(scelta);
     }

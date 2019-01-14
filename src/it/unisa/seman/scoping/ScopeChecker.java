@@ -58,6 +58,9 @@ public class ScopeChecker extends SemanticChecker {
                         SemanticData semanticData = new SemanticData();
                         semanticData.setIdentifier(identifierName);
                         semanticData.setKind(n.getKind());
+                        if (n.getKind().equals(ParDeclarationNode.PARAMETER)) {
+                            semanticData.setParType(((ParTypeNode) n.getChild(0)).getType());
+                        }
                         // Look for eventual type
                         TypeDeclarationVisitor tv = new TypeDeclarationVisitor();
                         ArrayList<TypeNode> types = (ArrayList<TypeNode>) n.accept(tv);

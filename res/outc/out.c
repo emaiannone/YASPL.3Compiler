@@ -4,6 +4,7 @@ double primoNumero, secondoNumero, risultato;
 char stringa[];
 int esse, esse2;
 void mostraMenu() {
+esse = 1;
 printf("%s", "0. Termina\n");
 printf("%s", "1. Mostra il menu\n");
 printf("%s", "2. Somma\n");
@@ -18,11 +19,12 @@ while (((*scelta < 0) && (*scelta > 5))) {
 scanf("%d", &*scelta);
 }
 }
-void inserisciNumeri(double *primo, double *secondo) {
+void inserisciNumeri(double *primo, double *secondo, int hello) {
+*primo = (*primo + 1);
 printf("%s", "Inserisci il primo numero:");
-scanf("%lf", &primoNumero);
+scanf("%lf", &*primo);
 printf("%s", "Inserisci il secondo numero:");
-scanf("%lf", &secondoNumero);
+scanf("%lf", &*secondo);
 }
 void eseguiOperazione(double primo, double secondo, int operazione, double *risultato) {
 double res = 0;
@@ -50,11 +52,11 @@ while ((!(scelta == 0))) {
 if ((scelta == 1)) {
 mostraMenu();
 } else {
-inserisciNumeri(primoNumero, secondoNumero);
-eseguiOperazione(primoNumero, secondoNumero, scelta, risultato);
-printf("%lf", risultato);
+inserisciNumeri(&primoNumero, &secondoNumero, (2 + 2));
+eseguiOperazione(primoNumero, secondoNumero, scelta, &risultato);
+printf("%lf%d", risultato, (2 + 2));
 }
-scegliOperazione(scelta);
+scegliOperazione(&scelta);
 }
 printf("%s%s", "Arriverderci!", "\nBuona giornata");
 }

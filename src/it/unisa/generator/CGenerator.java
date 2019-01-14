@@ -1,42 +1,18 @@
 package it.unisa.generator;
 
 import it.unisa.ast.MyNode;
-import it.unisa.ast.args.ArgsNode;
 import it.unisa.ast.declaration.procedure.ProcedureDeclarationNode;
-import it.unisa.ast.declaration.procedure.parameter.InNode;
-import it.unisa.ast.declaration.procedure.parameter.ParDeclarationNode;
-import it.unisa.ast.declaration.procedure.parameter.ParTypeNode;
-import it.unisa.ast.declaration.variable.VarDeclarationNode;
+import it.unisa.ast.declaration.procedure.parameter.InOutNode;
+import it.unisa.ast.declaration.procedure.parameter.OutNode;
 import it.unisa.ast.expression.ExpressionNode;
-import it.unisa.ast.expression.constant.ConstantNode;
-import it.unisa.ast.expression.identifier.IdentifierNode;
-import it.unisa.ast.expression.operation.arithmetic.DivOpNode;
-import it.unisa.ast.expression.operation.arithmetic.MinusOpNode;
-import it.unisa.ast.expression.operation.arithmetic.PlusOpNode;
-import it.unisa.ast.expression.operation.arithmetic.TimesOpNode;
-import it.unisa.ast.expression.operation.bool.AndOpNode;
-import it.unisa.ast.expression.operation.bool.OrOpNode;
-import it.unisa.ast.expression.operation.relational.*;
-import it.unisa.ast.expression.operation.unary.NotOpNode;
-import it.unisa.ast.expression.operation.unary.UminusOpNode;
-import it.unisa.ast.initialization.VarInitNode;
-import it.unisa.ast.list.ParDeclarationListNode;
-import it.unisa.ast.list.VarInitListNode;
 import it.unisa.ast.programma.ProgrammaNode;
-import it.unisa.ast.statement.AssignOpNode;
-import it.unisa.ast.statement.ReadOpNode;
-import it.unisa.ast.statement.WriteOpNode;
-import it.unisa.ast.statement.conditional.IfThenElseOpNode;
-import it.unisa.ast.statement.conditional.IfThenOpNode;
-import it.unisa.ast.statement.conditional.WhileOpNode;
 import it.unisa.ast.type.*;
-import it.unisa.seman.ParameterData;
 import it.unisa.seman.ScopeTable;
+import it.unisa.seman.SemanticData;
 import it.unisa.seman.SymbolTable;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("Duplicates")
 public class CGenerator {
     private static final String STDIO = "#include <stdio.h>";
     private static final String MAIN = "int main()";
@@ -74,13 +50,9 @@ public class CGenerator {
     private static final String QUOTES = "\"";
 
     private SymbolTable symbolTable;
-    private ArrayList<ParameterData> activeParameterList;
-    private boolean readOp;
 
     public CGenerator() {
         symbolTable = new SymbolTable();
-        activeParameterList = null;
-        readOp = false;
     }
 
     public SymbolTable getSymbolTable() {
@@ -98,31 +70,15 @@ public class CGenerator {
         symbolTable.pop();
     }
 
-    public ArrayList<ParameterData> getActiveParameterList() {
-        return activeParameterList;
-    }
-
-    public void setActiveParameterList(ArrayList<ParameterData> activeParameterList) {
-        this.activeParameterList = activeParameterList;
-    }
-
-    public boolean isReadOp() {
-        return readOp;
-    }
-
-    public void setReadOp(boolean readOp) {
-        this.readOp = readOp;
-    }
-
-    public String buildString(ProgrammaNode n, String declarationPart, String mainPart) {
+    public String buildProgrammaString(String declarationPart, String mainPart) {
         return STDIO + NEWLINE + declarationPart + MAIN + WHITESPACE + OPEN_BRACKET + NEWLINE + mainPart + CLOSE_BRACKET + NEWLINE;
     }
 
-    public String buildString(ProcedureDeclarationNode n, String procedureName, String pars, String body) {
+    public String buildProcedureString(String procedureName, String pars, String body) {
         return VOID + WHITESPACE + procedureName + pars + WHITESPACE + OPEN_BRACKET + NEWLINE + body + CLOSE_BRACKET + NEWLINE;
     }
 
-    public String buildString(VarDeclarationNode n, String type, String varInits) {
+    public String buildVarDeclarationString(String type, String varInits) {
         if (type.equals(StringNode.STRING)) {
             type = CHAR;
         }
@@ -132,19 +88,19 @@ public class CGenerator {
         return type + WHITESPACE + varInits + SEMICOLON + NEWLINE;
     }
 
-    public String buildString(VarInitListNode n, ArrayList<String> vars) {
+    public String buildVarInitListString(ArrayList<String> vars) {
         StringBuilder varList = new StringBuilder();
-        varList.append(vars.get(0));
-        for (int i = 1; i < vars.size(); i++) {
-            varList.append(COMMA + WHITESPACE);
+        for (int i = 0; i < vars.size(); i++) {
             varList.append(vars.get(i));
+            if (i < vars.size() - 1) {
+                varList.append(COMMA + WHITESPACE);
+            }
         }
         return varList.toString();
     }
 
-    public String buildString(VarInitNode n, String var, String initValue) {
-        IdentifierNode idNode = (IdentifierNode) n.getChild(0);
-        if (idNode.getType().equals(StringNode.STRING)) {
+    public String buildVarInitString(String varType, String var, String initValue) {
+        if (varType.equals(StringNode.STRING)) {
             var += ARRAY;
         }
         if (!initValue.equals("")) {
@@ -153,143 +109,163 @@ public class CGenerator {
         return var + initValue;
     }
 
-    public String buildString(ParDeclarationListNode n, ArrayList<String> pars) {
+    public String buildParDeclarationListString(ArrayList<String> pars) {
         StringBuilder parList = new StringBuilder();
-        if (!pars.isEmpty()) {
-            parList.append(pars.get(0));
-            for (int i = 1; i < pars.size(); i++) {
+        for (int i = 0; i < pars.size(); i++) {
+            parList.append(pars.get(i));
+            if (i < pars.size() - 1) {
                 parList.append(COMMA + WHITESPACE);
-                parList.append(pars.get(i));
             }
         }
         return OPEN_PAR + parList.toString() + CLOSE_PAR;
     }
 
-    public String buildString(ParDeclarationNode n, String type, String parName) {
+    public String buildParDeclarationString(String parType, String type, String parName) {
         return type + WHITESPACE + parName;
     }
 
-    public String buildString(ArgsNode n, ArrayList<String> args) {
-        // Add & if this is called in a context of a read statement
-        String optionalAmpersand = "";
-        if (readOp) {
-            optionalAmpersand = AMPERSAND;
-        }
+    public String buildArgsString(ArrayList<String> args) {
         StringBuilder argList = new StringBuilder();
-        argList.append(optionalAmpersand);
-        argList.append(args.get(0));
-        for (int i = 1; i < args.size(); i++) {
-            argList.append(COMMA + WHITESPACE);
-            argList.append(optionalAmpersand);
+        for (int i = 0; i < args.size(); i++) {
             argList.append(args.get(i));
+            if (i < args.size() - 1) {
+                argList.append(COMMA + WHITESPACE);
+            }
         }
         return argList.toString();
     }
 
-    public String buildString(ConstantNode n) {
-        return n.data().toString();
-    }
-
-    public String buildString(IdentifierNode n) {
-        String idName = (String) n.data();
-        // Adding the * in case this identifer represent an output parameter
-        if (activeParameterList != null) {
-            int i = 0;
-            boolean found = false;
-            while (i < activeParameterList.size() && !found) {
-                ParameterData parameterData = activeParameterList.get(i);
-                if (idName.equals(parameterData.getIdentifier())) {
-                    found = true;
-                } else {
-                    i++;
-                }
-            }
-            if (found) {
-                String parType = activeParameterList.get(i).getParType();
-                if (!parType.equals(InNode.IN)) {
-                    idName = STAR + idName;
-                }
+    public String buildIdentifierString(String identifierName) {
+        SemanticData semanticData = symbolTable.lookup(identifierName);
+        String parType = semanticData.getParType();
+        if (parType != null) {
+            if (parType.equals(OutNode.OUT) || parType.equals(InOutNode.INOUT)) {
+                identifierName = STAR + identifierName;
             }
         }
-        return idName;
+        return identifierName;
     }
 
-    public String buildString(PlusOpNode n, String firstOperand, String secondOperand) {
+    public String buildPlusString(String firstOperand, String secondOperand) {
         return OPEN_PAR + firstOperand + WHITESPACE + PLUS + WHITESPACE + secondOperand + CLOSE_PAR;
     }
 
-    public String buildString(MinusOpNode n, String firstOperand, String secondOperand) {
+    public String buildMinusString(String firstOperand, String secondOperand) {
         return OPEN_PAR + firstOperand + WHITESPACE + MINUS + WHITESPACE + secondOperand + CLOSE_PAR;
     }
 
-    public String buildString(TimesOpNode n, String firstOperand, String secondOperand) {
+    public String buildTimesString(String firstOperand, String secondOperand) {
         return OPEN_PAR + firstOperand + WHITESPACE + STAR + WHITESPACE + secondOperand + CLOSE_PAR;
     }
 
-    public String buildString(DivOpNode n, String firstOperand, String secondOperand) {
+    public String buildDivString(String firstOperand, String secondOperand) {
         return OPEN_PAR + firstOperand + WHITESPACE + DIV + WHITESPACE + secondOperand + CLOSE_PAR;
     }
 
-    public String buildString(AndOpNode n, String firstOperand, String secondOperand) {
+    public String buildAndString(String firstOperand, String secondOperand) {
         return OPEN_PAR + firstOperand + WHITESPACE + AND + WHITESPACE + secondOperand + CLOSE_PAR;
     }
 
-    public String buildString(OrOpNode n, String firstOperand, String secondOperand) {
+    public String buildOrString(String firstOperand, String secondOperand) {
         return OPEN_PAR + firstOperand + WHITESPACE + OR + WHITESPACE + secondOperand + CLOSE_PAR;
     }
 
-    public String buildString(EQOpNode n, String firstOperand, String secondOperand) {
+    public String buildEQString(String firstOperand, String secondOperand) {
         return OPEN_PAR + firstOperand + WHITESPACE + EQUALS + WHITESPACE + secondOperand + CLOSE_PAR;
     }
 
-    public String buildString(GEOpNode n, String firstOperand, String secondOperand) {
+    public String buildGEString(String firstOperand, String secondOperand) {
         return OPEN_PAR + firstOperand + WHITESPACE + GREATER_EQUALS + WHITESPACE + secondOperand + CLOSE_PAR;
     }
 
-    public String buildString(GTOpNode n, String firstOperand, String secondOperand) {
+    public String buildGTString(String firstOperand, String secondOperand) {
         return OPEN_PAR + firstOperand + WHITESPACE + GREATER_THAN + WHITESPACE + secondOperand + CLOSE_PAR;
     }
 
-    public String buildString(LEOpNode n, String firstOperand, String secondOperand) {
+    public String buildLEString(String firstOperand, String secondOperand) {
         return OPEN_PAR + firstOperand + WHITESPACE + LESSER_EQUALS + WHITESPACE + secondOperand + CLOSE_PAR;
     }
 
-    public String buildString(LTOpNode n, String firstOperand, String secondOperand) {
+    public String buildLTString(String firstOperand, String secondOperand) {
         return OPEN_PAR + firstOperand + WHITESPACE + LESSER_THAN + WHITESPACE + secondOperand + CLOSE_PAR;
     }
 
-    public String buildString(UminusOpNode n, String firstOperand) {
+    public String buildUminusString(String firstOperand) {
         return OPEN_PAR + MINUS + firstOperand + CLOSE_PAR;
     }
 
-    public String buildString(NotOpNode n, String firstOperand) {
+    public String buildNotString(String firstOperand) {
         return OPEN_PAR + NOT + firstOperand + CLOSE_PAR;
     }
 
-    public String buildString(AssignOpNode n, String firstOperand, String secondOperand) {
+    public String buildAssignString(String firstOperand, String secondOperand) {
         return firstOperand + WHITESPACE + ASSIGN + WHITESPACE + secondOperand + SEMICOLON + NEWLINE;
     }
 
-    public String buildString(IfThenOpNode n, String condition, String thenBranch) {
+    public String buildIfThenString(String condition, String thenBranch) {
         return IF + WHITESPACE + OPEN_PAR + condition + CLOSE_PAR + WHITESPACE + OPEN_BRACKET + NEWLINE
                 + thenBranch + CLOSE_BRACKET + NEWLINE;
     }
 
-    public String buildString(IfThenElseOpNode n, String condition, String thenBranch, String elseBranch) {
+    public String buildIfThenElseString(String condition, String thenBranch, String elseBranch) {
         return IF + WHITESPACE + OPEN_PAR + condition + CLOSE_PAR + WHITESPACE + OPEN_BRACKET + NEWLINE
                 + thenBranch + CLOSE_BRACKET + WHITESPACE + ELSE + WHITESPACE + OPEN_BRACKET + NEWLINE
                 + elseBranch + CLOSE_BRACKET + NEWLINE;
     }
 
-    public String buildString(WhileOpNode n, String condition, String body) {
+    public String buildWhileString(String condition, String body) {
         return WHILE + WHITESPACE + OPEN_PAR + condition + CLOSE_PAR + WHITESPACE + OPEN_BRACKET + NEWLINE
                 + body + CLOSE_BRACKET + NEWLINE;
     }
 
-    public String buildString(ReadOpNode n, ArrayList<ExpressionNode> argList, String args) {
+    public String buildCallString(String procedureName, ArrayList<String> args) {
+        StringBuilder argList = new StringBuilder();
+        if (args != null) {
+            for (int i = 0; i < args.size(); i++) {
+                String parType = symbolTable.lookup(procedureName).getParameterList().get(i).getParType();
+                if (parType.equals(OutNode.OUT) || parType.equals(InOutNode.INOUT)) {
+                    argList.append(AMPERSAND);
+                }
+                argList.append(args.get(i));
+                if (i < args.size() - 1) {
+                    argList.append(COMMA + WHITESPACE);
+                }
+            }
+        }
+        return procedureName + OPEN_PAR + argList + CLOSE_PAR + SEMICOLON + NEWLINE;
+    }
+
+    public String buildReadString(ArrayList<ExpressionNode> exprs, ArrayList<String> args) {
+        String format = buildFormatString(exprs);
+        StringBuilder argList = new StringBuilder();
+        for (int i = 0; i < args.size(); i++) {
+            argList.append(AMPERSAND);
+            argList.append(args.get(i));
+            if (i < args.size() - 1) {
+                argList.append(COMMA + WHITESPACE);
+            }
+        }
+        return SCANF + OPEN_PAR + QUOTES + format + QUOTES + COMMA + WHITESPACE
+                + argList.toString() + CLOSE_PAR + SEMICOLON + NEWLINE;
+    }
+
+    public String buildWriteString(ArrayList<ExpressionNode> exprs, ArrayList<String> args) {
+        String format = buildFormatString(exprs);
+        StringBuilder argList = new StringBuilder();
+        for (int i = 0; i < args.size(); i++) {
+            argList.append(args.get(i));
+            if (i < args.size() - 1) {
+                argList.append(COMMA + WHITESPACE);
+            }
+        }
+        return PRINTF + OPEN_PAR + QUOTES + format + QUOTES + COMMA + WHITESPACE
+                + argList.toString() + CLOSE_PAR + SEMICOLON + NEWLINE;
+    }
+
+    private String buildFormatString(ArrayList<ExpressionNode> exprs) {
         StringBuilder format = new StringBuilder();
-        for (ExpressionNode arg : argList) {
-            switch (arg.getType()) {
+        for (ExpressionNode expr : exprs) {
+            switch (expr.getType()) {
                 case IntegerNode.INTEGER:
                     format.append("%d");
                     break;
@@ -307,38 +283,6 @@ public class CGenerator {
                     break;
             }
         }
-        return SCANF + OPEN_PAR + QUOTES + format + QUOTES + COMMA + WHITESPACE + args + CLOSE_PAR + SEMICOLON + NEWLINE;
-    }
-
-    public String buildString(WriteOpNode n, ArrayList<ExpressionNode> argList, String args) {
-        StringBuilder format = new StringBuilder();
-        for (ExpressionNode arg : argList) {
-            switch (arg.getType()) {
-                case IntegerNode.INTEGER:
-                    format.append("%d");
-                    break;
-                case DoubleNode.DOUBLE:
-                    format.append("%lf");
-                    break;
-                case CharacterNode.CHARACTER:
-                    format.append("%c");
-                    break;
-                case StringNode.STRING:
-                    format.append("%s");
-                    break;
-                case BooleanNode.BOOLEAN:
-                    format.append("%d");
-                    break;
-            }
-        }
-        return PRINTF + OPEN_PAR + QUOTES + format + QUOTES + COMMA + WHITESPACE + args + CLOSE_PAR + SEMICOLON + NEWLINE;
-    }
-
-    public String buildString(TypeNode n) {
-        return n.getType();
-    }
-
-    public String buildString(ParTypeNode n) {
-        return n.getType();
+        return format.toString();
     }
 }

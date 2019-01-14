@@ -97,6 +97,16 @@ public class TypeCheckingVisitor extends SemanticVisitor {
     }
 
     @Override
+    public Object visit(TrueNode n) {
+        return visit((BoolConstantNode) n);
+    }
+
+    @Override
+    public Object visit(FalseNode n) {
+        return visit((BoolConstantNode) n);
+    }
+
+    @Override
     public Object visit(IdentifierNode n) {
         typeChecker.assignType(n);
         return null;

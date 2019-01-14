@@ -7,7 +7,7 @@ import it.unisa.parser.ParserSym;
 import it.unisa.visitor.generation.CGeneratorVisitor;
 import it.unisa.visitor.semantic.scope.ScopeCheckingVisitor;
 import it.unisa.visitor.semantic.type.TypeCheckingVisitor;
-import it.unisa.visitor.xml.XMLMyVisitor;
+import it.unisa.visitor.xml.XMLVisitor;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -108,7 +108,7 @@ public class Driver {
     }
 
     private static String getXML(ProgrammaNode root) {
-        XMLMyVisitor v = new XMLMyVisitor();
+        XMLVisitor v = new XMLVisitor();
         return (String) root.accept(v);
     }
 

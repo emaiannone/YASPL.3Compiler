@@ -35,7 +35,7 @@ import java.util.LinkedHashSet;
 
 // Visitor that is able to convert the tree of MyNode into an XML format
 @SuppressWarnings("unchecked")
-public class XMLMyVisitor implements MyVisitor {
+public class XMLVisitor implements MyVisitor {
     @Override
     public Object visit(MyNode n) {
         StringBuilder xml = new StringBuilder();
@@ -113,6 +113,16 @@ public class XMLMyVisitor implements MyVisitor {
 
     @Override
     public Object visit(BoolConstantNode n) {
+        return visit((ConstantNode) n);
+    }
+
+    @Override
+    public Object visit(TrueNode n) {
+        return visit((ConstantNode) n);
+    }
+
+    @Override
+    public Object visit(FalseNode n) {
         return visit((ConstantNode) n);
     }
 

@@ -142,6 +142,16 @@ public abstract class TreeVisitor implements MyVisitor {
     }
 
     @Override
+    public Object visit(TrueNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(FalseNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
     public Object visit(IdentifierNode n) {
         return visitSubtree(n);
     }

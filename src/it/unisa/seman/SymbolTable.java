@@ -40,12 +40,22 @@ public class SymbolTable {
      * @return
      */
     public SemanticData lookup(String key) {
+        Stack<ScopeTable> tempStack = new Stack<>();
+        while (!stack.isEmpty()) {
+            tempStack.push(stack.pop());
+        }
+
         SemanticData data = null;
-        Iterator<ScopeTable> iterator = stack.iterator();
+        Iterator<ScopeTable> iterator = tempStack.iterator();
         while (iterator.hasNext() && data == null) {
             ScopeTable s = iterator.next();
             data = s.getTable().get(key);
         }
+
+        while (!tempStack.isEmpty()) {
+            stack.push(tempStack.pop());
+        }
+
         return data;
     }
 
