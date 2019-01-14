@@ -10,6 +10,8 @@
 head
     int scelta = 1;
     double primoNumero, secondoNumero, risultato;
+    string stringa;
+    bool esse, esse2;
 
     def mostraMenu() {
         "0. Termina\n" ->;

@@ -10,6 +10,9 @@ import it.unisa.ast.statement.CallOpNode;
 import it.unisa.ast.statement.ReadOpNode;
 import it.unisa.ast.statement.StatementNode;
 import it.unisa.ast.statement.conditional.ConditionalStatementNode;
+import it.unisa.ast.statement.conditional.IfThenElseOpNode;
+import it.unisa.ast.statement.conditional.IfThenOpNode;
+import it.unisa.ast.statement.conditional.WhileOpNode;
 import it.unisa.seman.scoping.ScopeChecker;
 import it.unisa.visitor.semantic.SemanticVisitor;
 
@@ -81,6 +84,21 @@ public class ScopeCheckingVisitor extends SemanticVisitor {
 
     @Override
     public Object visit(ConditionalStatementNode n) {
+        return visit((StatementNode) n);
+    }
+
+    @Override
+    public Object visit(IfThenOpNode n) {
+        return visit((StatementNode) n);
+    }
+
+    @Override
+    public Object visit(IfThenElseOpNode n) {
+        return visit((StatementNode) n);
+    }
+
+    @Override
+    public Object visit(WhileOpNode n) {
         return visit((StatementNode) n);
     }
 

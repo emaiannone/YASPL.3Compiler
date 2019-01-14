@@ -4,6 +4,7 @@ import it.unisa.ast.programma.ProgrammaNode;
 import it.unisa.lexer.Yylex;
 import it.unisa.parser.Parser;
 import it.unisa.parser.ParserSym;
+import it.unisa.visitor.generation.CGeneratorVisitor;
 import it.unisa.visitor.semantic.scope.ScopeCheckingVisitor;
 import it.unisa.visitor.semantic.type.TypeCheckingVisitor;
 import it.unisa.visitor.xml.XMLMyVisitor;
@@ -17,11 +18,12 @@ import java.util.ArrayList;
 @SuppressWarnings({"unchecked", "Duplicates"})
 public class Driver {
     public static void main(String[] args) {
+        String programName = args[0];
 
         System.out.print("Parsing... ");
         ProgrammaNode root = null;
         try {
-            root = parse("res/ProgramTests/programma.yaspl");
+            root = parse(programName);
             System.out.println("successful!");
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,7 +74,14 @@ public class Driver {
                 }
 
                 if (typeOK) {
-                    //TODO Lancio Visita Generazione C e scrivere in un file in cout
+                    System.out.print("Generating C Source Code... ");
+                    try {
+                        writeToFile("res/outc/out.c", generateCSource(root));
+                        System.out.println("successful!");
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        System.out.println("failed!");
+                    }
 
                     //TODO Lancio clang sul file generato
                 }
@@ -123,5 +132,10 @@ public class Driver {
         for (String e : errors) {
             System.out.println('\t' + e);
         }
+    }
+
+    private static String generateCSource(ProgrammaNode root) {
+        CGeneratorVisitor cgv = new CGeneratorVisitor();
+        return (String) root.accept(cgv);
     }
 }

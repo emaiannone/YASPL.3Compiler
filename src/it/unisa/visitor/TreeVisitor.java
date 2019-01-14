@@ -4,27 +4,31 @@ import it.unisa.ast.MyNode;
 import it.unisa.ast.args.ArgsNode;
 import it.unisa.ast.declaration.DeclarationNode;
 import it.unisa.ast.declaration.procedure.ProcedureDeclarationNode;
-import it.unisa.ast.declaration.procedure.parameter.ParDeclarationNode;
+import it.unisa.ast.declaration.procedure.parameter.*;
 import it.unisa.ast.declaration.variable.VarDeclarationNode;
 import it.unisa.ast.expression.ExpressionNode;
 import it.unisa.ast.expression.constant.*;
 import it.unisa.ast.expression.identifier.IdentifierNode;
 import it.unisa.ast.expression.operation.OpNode;
-import it.unisa.ast.expression.operation.arithmetic.ArithOpNode;
+import it.unisa.ast.expression.operation.arithmetic.*;
+import it.unisa.ast.expression.operation.bool.AndOpNode;
 import it.unisa.ast.expression.operation.bool.BoolOpNode;
-import it.unisa.ast.expression.operation.relational.RelOpNode;
+import it.unisa.ast.expression.operation.bool.OrOpNode;
+import it.unisa.ast.expression.operation.relational.*;
 import it.unisa.ast.expression.operation.unary.NotOpNode;
 import it.unisa.ast.expression.operation.unary.UminusOpNode;
 import it.unisa.ast.initialization.VarInitNode;
 import it.unisa.ast.list.BodyNode;
+import it.unisa.ast.list.ParDeclarationListNode;
+import it.unisa.ast.list.StatementListNode;
 import it.unisa.ast.list.VarInitListNode;
 import it.unisa.ast.programma.ProgrammaNode;
-import it.unisa.ast.statement.AssignOpNode;
-import it.unisa.ast.statement.CallOpNode;
-import it.unisa.ast.statement.ReadOpNode;
-import it.unisa.ast.statement.StatementNode;
+import it.unisa.ast.statement.*;
 import it.unisa.ast.statement.conditional.ConditionalStatementNode;
-import it.unisa.ast.type.TypeNode;
+import it.unisa.ast.statement.conditional.IfThenElseOpNode;
+import it.unisa.ast.statement.conditional.IfThenOpNode;
+import it.unisa.ast.statement.conditional.WhileOpNode;
+import it.unisa.ast.type.*;
 
 import java.util.ArrayList;
 
@@ -153,12 +157,67 @@ public abstract class TreeVisitor implements MyVisitor {
     }
 
     @Override
+    public Object visit(PlusOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(MinusOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(TimesOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(DivOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
     public Object visit(BoolOpNode n) {
         return visitSubtree(n);
     }
 
     @Override
+    public Object visit(AndOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(OrOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
     public Object visit(RelOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(EQOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(GEOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(GTOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(LEOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(LTOpNode n) {
         return visitSubtree(n);
     }
 
@@ -183,6 +242,21 @@ public abstract class TreeVisitor implements MyVisitor {
     }
 
     @Override
+    public Object visit(IfThenOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(IfThenElseOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(WhileOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
     public Object visit(CallOpNode n) {
         return visitSubtree(n);
     }
@@ -193,12 +267,72 @@ public abstract class TreeVisitor implements MyVisitor {
     }
 
     @Override
+    public Object visit(WriteOpNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
     public Object visit(BodyNode n) {
         return visitSubtree(n);
     }
 
     @Override
+    public Object visit(StatementListNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
     public Object visit(TypeNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(IntegerNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(DoubleNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(CharacterNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(StringNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(BooleanNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(ParTypeNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(InNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(OutNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(InOutNode n) {
+        return visitSubtree(n);
+    }
+
+    @Override
+    public Object visit(ParDeclarationListNode n) {
         return visitSubtree(n);
     }
 }
