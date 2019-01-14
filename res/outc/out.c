@@ -1,7 +1,7 @@
 #include <stdio.h>
 int scelta = 1;
 double primoNumero, secondoNumero, risultato;
-char stringa;
+char stringa[];
 int esse, esse2;
 void mostraMenu() {
 printf("%s", "0. Termina\n");
@@ -13,9 +13,9 @@ printf("%s", "5. Divisione\n");
 }
 void scegliOperazione(int *scelta) {
 printf("%s", "Scegli l'operazione: ");
-scelta = (-1);
-while (((scelta < 0) && (scelta >= 5))) {
-scanf("%s", scelta);
+*scelta = (-1);
+while (((*scelta < 0) && (*scelta >= 5))) {
+scanf("%s", *scelta);
 }
 }
 void inserisciNumeri(double *primo, double *secondo) {
@@ -43,7 +43,7 @@ res = (primoNumero / secondoNumero);
 }
 }
 }
-risultato = res;
+*risultato = res;
 }
 int main() {
 while ((!(scelta == 0))) {

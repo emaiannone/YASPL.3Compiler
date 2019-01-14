@@ -28,9 +28,13 @@ import it.unisa.ast.statement.conditional.IfThenElseOpNode;
 import it.unisa.ast.statement.conditional.IfThenOpNode;
 import it.unisa.ast.statement.conditional.WhileOpNode;
 import it.unisa.ast.type.*;
+import it.unisa.seman.ParameterData;
 import it.unisa.seman.ScopeTable;
+import it.unisa.seman.SemanticData;
 import it.unisa.seman.SymbolTable;
 import it.unisa.visitor.TreeVisitor;
+
+import java.util.ArrayList;
 
 public class CGeneratorVisitor extends TreeVisitor {
     private static final String STDIO = "#include <stdio.h>";
@@ -43,6 +47,7 @@ public class CGeneratorVisitor extends TreeVisitor {
     private static final String VOID = "void";
     private static final String INT = "int";
     private static final String CHAR = "char";
+    private static final String ARRAY = "[]";
     private static final String ASSIGN = "=";
     private static final String PLUS = "+";
     private static final String MINUS = "-";
@@ -67,9 +72,11 @@ public class CGeneratorVisitor extends TreeVisitor {
     private static final String QUOTES = "\"";
 
     private SymbolTable symbolTable;
+    private ArrayList<ParameterData> activeParameterList;
 
     public CGeneratorVisitor() {
         symbolTable = new SymbolTable();
+        activeParameterList = null;
     }
 
     private void startScope(MyNode n) {
@@ -114,12 +121,13 @@ public class CGeneratorVisitor extends TreeVisitor {
     @Override
     public Object visit(ProcedureDeclarationNode n) {
         startScope(n);
-
         String procedureName = (String) n.getChild(0).accept(this);
+        activeParameterList = symbolTable.lookup(procedureName).getParameterList();
         String pars = (String) n.getChild(1).accept(this);
         String body = (String) n.getChild(2).accept(this);
 
         endCurrentScope();
+        activeParameterList = null;
 
         return VOID + WHITESPACE + procedureName + pars + WHITESPACE + OPEN_BRACKET + NEWLINE + body + CLOSE_BRACKET + NEWLINE;
     }
@@ -152,7 +160,10 @@ public class CGeneratorVisitor extends TreeVisitor {
     @Override
     public Object visit(VarInitNode n) {
         String var = (String) n.getChild(0).accept(this);
-        //TODO Controllare nella tabella dei simboli se il tipo è string: mettere un [] attaccato al nome
+        SemanticData semanticData = symbolTable.lookup((String) n.getChild(0).data());
+        if (semanticData.getType().equals(StringNode.STRING)) {
+            var += ARRAY;
+        }
         String initValue = "";
         if (n.getChild(1) != null) {
             initValue = WHITESPACE + ASSIGN + WHITESPACE + n.getChild(1).accept(this);
@@ -177,14 +188,9 @@ public class CGeneratorVisitor extends TreeVisitor {
     @Override
     public Object visit(ParDeclarationNode n) {
         String type = (String) n.getChild(1).accept(this);
-        String pointer = "";
-        String kind = (String) n.getChild(0).accept(this);
-        if (!kind.equals(InNode.IN)) {
-            pointer = STAR;
-        }
         String parName = (String) n.getChild(2).accept(this);
 
-        return type + WHITESPACE + pointer + parName;
+        return type + WHITESPACE + parName;
     }
 
     @Override
@@ -219,15 +225,34 @@ public class CGeneratorVisitor extends TreeVisitor {
         return n.data().toString();
     }
 
+    //TODO TrueNode deve tornare 1, mentre FalseNode 0
     @Override
     public Object visit(BoolConstantNode n) {
         return n.data().toString();
     }
 
-    //TODO Se è un parametro di out o inout allora va messo un * prima del nome: consultare symbol table
     @Override
     public Object visit(IdentifierNode n) {
-        return n.data().toString();
+        String idName = n.data().toString();
+        if (activeParameterList != null) {
+            int i = 0;
+            boolean found = false;
+            while (i < activeParameterList.size() && !found) {
+                ParameterData parameterData = activeParameterList.get(i);
+                if (idName.equals(parameterData.getIdentifier())) {
+                    found = true;
+                } else {
+                    i++;
+                }
+            }
+            if (found) {
+                String parType = activeParameterList.get(i).getParType();
+                if (!parType.equals(InNode.IN)) {
+                    idName = STAR + idName;
+                }
+            }
+        }
+        return idName;
     }
 
     @Override

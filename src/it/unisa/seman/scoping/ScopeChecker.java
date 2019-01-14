@@ -74,10 +74,12 @@ public class ScopeChecker extends SemanticChecker {
                             if (pars != null && !pars.isEmpty()) {
                                 ArrayList<ParameterData> parameterDataList = new ArrayList<>();
                                 for (ParDeclarationNode t : pars) {
+                                    IdentifierNode idNode = (IdentifierNode) t.getChild(2);
                                     ParTypeNode parTypeNode = (ParTypeNode) t.getChild(0);
                                     TypeNode typeNode = (TypeNode) t.getChild(1);
 
                                     ParameterData parameterData = new ParameterData();
+                                    parameterData.setIdentifier((String) idNode.data());
                                     parameterData.setParType(parTypeNode.getType());
                                     parameterData.setType(typeNode.getType());
                                     parameterDataList.add(parameterData);
