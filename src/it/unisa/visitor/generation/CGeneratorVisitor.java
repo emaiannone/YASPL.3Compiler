@@ -5,6 +5,7 @@ import it.unisa.ast.args.ArgsNode;
 import it.unisa.ast.declaration.procedure.ProcedureDeclarationNode;
 import it.unisa.ast.declaration.procedure.parameter.*;
 import it.unisa.ast.declaration.variable.VarDeclarationNode;
+import it.unisa.ast.expression.ExpressionNode;
 import it.unisa.ast.expression.constant.*;
 import it.unisa.ast.expression.identifier.IdentifierNode;
 import it.unisa.ast.expression.operation.arithmetic.DivOpNode;
@@ -28,14 +29,12 @@ import it.unisa.ast.statement.conditional.IfThenElseOpNode;
 import it.unisa.ast.statement.conditional.IfThenOpNode;
 import it.unisa.ast.statement.conditional.WhileOpNode;
 import it.unisa.ast.type.*;
-import it.unisa.seman.ParameterData;
-import it.unisa.seman.ScopeTable;
-import it.unisa.seman.SemanticData;
-import it.unisa.seman.SymbolTable;
+import it.unisa.generator.CGenerator;
 import it.unisa.visitor.TreeVisitor;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("Duplicates")
 public class CGeneratorVisitor extends TreeVisitor {
     private static final String STDIO = "#include <stdio.h>";
     private static final String MAIN = "int main()";
@@ -53,6 +52,7 @@ public class CGeneratorVisitor extends TreeVisitor {
     private static final String MINUS = "-";
     private static final String STAR = "*";
     private static final String DIV = "/";
+    private static final String AMPERSAND = "&";
     private static final String EQUALS = "==";
     private static final String GREATER_EQUALS = ">=";
     private static final String GREATER_THAN = ">=";
@@ -71,25 +71,11 @@ public class CGeneratorVisitor extends TreeVisitor {
     private static final String WHITESPACE = " ";
     private static final String QUOTES = "\"";
 
-    private SymbolTable symbolTable;
-    private ArrayList<ParameterData> activeParameterList;
+    private CGenerator cGenerator;
 
     public CGeneratorVisitor() {
-        symbolTable = new SymbolTable();
-        activeParameterList = null;
+        cGenerator = new CGenerator();
     }
-
-    private void startScope(MyNode n) {
-        if (n instanceof ProgrammaNode || n instanceof ProcedureDeclarationNode) {
-            ScopeTable scopeTable = (ScopeTable) n.data();
-            symbolTable.push(scopeTable);
-        }
-    }
-
-    private void endCurrentScope() {
-        symbolTable.pop();
-    }
-
 
     protected String visitSubtree(MyNode n) {
         StringBuilder result = new StringBuilder();
@@ -108,81 +94,67 @@ public class CGeneratorVisitor extends TreeVisitor {
 
     @Override
     public Object visit(ProgrammaNode n) {
-        startScope(n);
+        cGenerator.startScope(n);
 
         String declarationPart = (String) n.getChild(0).accept(this);
         String mainPart = (String) n.getChild(1).accept(this);
+        String result = cGenerator.buildString(n, declarationPart, mainPart);
 
-        endCurrentScope();
+        cGenerator.endCurrentScope();
 
-        return STDIO + NEWLINE + declarationPart + MAIN + WHITESPACE + OPEN_BRACKET + NEWLINE + mainPart + CLOSE_BRACKET + NEWLINE;
+        return result;
     }
 
     @Override
     public Object visit(ProcedureDeclarationNode n) {
-        startScope(n);
+        cGenerator.startScope(n);
+
         String procedureName = (String) n.getChild(0).accept(this);
-        activeParameterList = symbolTable.lookup(procedureName).getParameterList();
+        cGenerator.setActiveParameterList(cGenerator.getSymbolTable().lookup(procedureName).getParameterList());
         String pars = (String) n.getChild(1).accept(this);
         String body = (String) n.getChild(2).accept(this);
 
-        endCurrentScope();
-        activeParameterList = null;
+        String result = cGenerator.buildString(n, procedureName, pars, body);
 
-        return VOID + WHITESPACE + procedureName + pars + WHITESPACE + OPEN_BRACKET + NEWLINE + body + CLOSE_BRACKET + NEWLINE;
+        cGenerator.endCurrentScope();
+        cGenerator.setActiveParameterList(null);
+
+        return result;
     }
 
     @Override
     public Object visit(VarDeclarationNode n) {
         String type = (String) n.getChild(0).accept(this);
-        if (type.equals(StringNode.STRING)) {
-            type = CHAR;
-        }
-        if (type.equals(BooleanNode.BOOLEAN)) {
-            type = INT;
-        }
         String varInits = (String) n.getChild(1).accept(this);
-        return type + WHITESPACE + varInits + SEMICOLON + NEWLINE;
+        return cGenerator.buildString(n, type, varInits);
     }
 
     @Override
     public Object visit(VarInitListNode n) {
-        StringBuilder vars = new StringBuilder();
-        vars.append((String) n.getChild(0).accept(this));
-        for (int i = 1; i < n.childrenNumber(); i++) {
-            vars.append(COMMA + WHITESPACE);
-            String var = (String) n.getChild(i).accept(this);
-            vars.append(var);
+        ArrayList<String> vars = new ArrayList<>();
+        for (int i = 0; i < n.childrenNumber(); i++) {
+            vars.add((String) n.getChild(i).accept(this));
         }
-        return vars.toString();
+        return cGenerator.buildString(n, vars);
     }
 
     @Override
     public Object visit(VarInitNode n) {
         String var = (String) n.getChild(0).accept(this);
-        SemanticData semanticData = symbolTable.lookup((String) n.getChild(0).data());
-        if (semanticData.getType().equals(StringNode.STRING)) {
-            var += ARRAY;
-        }
         String initValue = "";
         if (n.getChild(1) != null) {
-            initValue = WHITESPACE + ASSIGN + WHITESPACE + n.getChild(1).accept(this);
+            initValue = (String) n.getChild(1).accept(this);
         }
-        return var + initValue;
+        return cGenerator.buildString(n, var, initValue);
     }
 
     @Override
     public Object visit(ParDeclarationListNode n) {
-        StringBuilder pars = new StringBuilder();
-        if (n.getChild(0) != null) {
-            pars.append((String) n.getChild(0).accept(this));
-            for (int i = 1; i < n.childrenNumber(); i++) {
-                pars.append(COMMA + WHITESPACE);
-                String arg = (String) n.getChild(i).accept(this);
-                pars.append(arg);
-            }
+        ArrayList<String> pars = new ArrayList<>();
+        for (int i = 0; i < n.childrenNumber(); i++) {
+            pars.add((String) n.getChild(i).accept(this));
         }
-        return OPEN_PAR + pars.toString() + CLOSE_PAR;
+        return cGenerator.buildString(n, pars);
     }
 
     @Override
@@ -190,187 +162,165 @@ public class CGeneratorVisitor extends TreeVisitor {
         String type = (String) n.getChild(1).accept(this);
         String parName = (String) n.getChild(2).accept(this);
 
-        return type + WHITESPACE + parName;
+        return cGenerator.buildString(n, type, parName);
     }
 
     @Override
     public Object visit(ArgsNode n) {
-        StringBuilder args = new StringBuilder();
-        args.append((String) n.getChild(0).accept(this));
-        for (int i = 1; i < n.childrenNumber(); i++) {
-            args.append(COMMA + WHITESPACE);
-            String arg = (String) n.getChild(i).accept(this);
-            args.append(arg);
+        ArrayList<String> args = new ArrayList<>();
+        for (int i = 0; i < n.childrenNumber(); i++) {
+            args.add((String) n.getChild(i).accept(this));
         }
-        return args.toString();
+        return cGenerator.buildString(n, args);
     }
 
     @Override
     public Object visit(IntegerConstantNode n) {
-        return n.data().toString();
+        return cGenerator.buildString(n);
     }
 
     @Override
     public Object visit(DoubleConstantNode n) {
-        return n.data().toString();
+        return cGenerator.buildString(n);
     }
 
     @Override
     public Object visit(StringConstantNode n) {
-        return n.data().toString();
+        return cGenerator.buildString(n);
     }
 
     @Override
     public Object visit(CharConstantNode n) {
-        return n.data().toString();
+        return cGenerator.buildString(n);
     }
 
     //TODO TrueNode deve tornare 1, mentre FalseNode 0
     @Override
     public Object visit(BoolConstantNode n) {
-        return n.data().toString();
+        return cGenerator.buildString(n);
     }
 
     @Override
     public Object visit(IdentifierNode n) {
-        String idName = n.data().toString();
-        if (activeParameterList != null) {
-            int i = 0;
-            boolean found = false;
-            while (i < activeParameterList.size() && !found) {
-                ParameterData parameterData = activeParameterList.get(i);
-                if (idName.equals(parameterData.getIdentifier())) {
-                    found = true;
-                } else {
-                    i++;
-                }
-            }
-            if (found) {
-                String parType = activeParameterList.get(i).getParType();
-                if (!parType.equals(InNode.IN)) {
-                    idName = STAR + idName;
-                }
-            }
-        }
-        return idName;
+        return cGenerator.buildString(n);
     }
 
     @Override
     public Object visit(PlusOpNode n) {
         String first = (String) n.getChild(0).accept(this);
         String second = (String) n.getChild(1).accept(this);
-        return OPEN_PAR + first + WHITESPACE + PLUS + WHITESPACE + second + CLOSE_PAR;
+        return cGenerator.buildString(n, first, second);
     }
 
     @Override
     public Object visit(MinusOpNode n) {
         String first = (String) n.getChild(0).accept(this);
         String second = (String) n.getChild(1).accept(this);
-        return OPEN_PAR + first + WHITESPACE + MINUS + WHITESPACE + second + CLOSE_PAR;
+        return cGenerator.buildString(n, first, second);
     }
 
     @Override
     public Object visit(TimesOpNode n) {
         String first = (String) n.getChild(0).accept(this);
         String second = (String) n.getChild(1).accept(this);
-        return OPEN_PAR + first + WHITESPACE + STAR + WHITESPACE + second + CLOSE_PAR;
+        return cGenerator.buildString(n, first, second);
     }
 
     @Override
     public Object visit(DivOpNode n) {
         String first = (String) n.getChild(0).accept(this);
         String second = (String) n.getChild(1).accept(this);
-        return OPEN_PAR + first + WHITESPACE + DIV + WHITESPACE + second + CLOSE_PAR;
+        return cGenerator.buildString(n, first, second);
     }
 
     @Override
     public Object visit(AndOpNode n) {
         String first = (String) n.getChild(0).accept(this);
         String second = (String) n.getChild(1).accept(this);
-        return OPEN_PAR + first + WHITESPACE + AND + WHITESPACE + second + CLOSE_PAR;
+        return cGenerator.buildString(n, first, second);
     }
 
     @Override
     public Object visit(OrOpNode n) {
         String first = (String) n.getChild(0).accept(this);
         String second = (String) n.getChild(1).accept(this);
-        return OPEN_PAR + first + WHITESPACE + OR + WHITESPACE + second + CLOSE_PAR;
+        return cGenerator.buildString(n, first, second);
     }
 
     @Override
     public Object visit(EQOpNode n) {
         String first = (String) n.getChild(0).accept(this);
         String second = (String) n.getChild(1).accept(this);
-        return OPEN_PAR + first + WHITESPACE + EQUALS + WHITESPACE + second + CLOSE_PAR;
+        return cGenerator.buildString(n, first, second);
     }
 
     @Override
     public Object visit(GEOpNode n) {
         String first = (String) n.getChild(0).accept(this);
         String second = (String) n.getChild(1).accept(this);
-        return OPEN_PAR + first + WHITESPACE + GREATER_EQUALS + WHITESPACE + second + CLOSE_PAR;
+        return cGenerator.buildString(n, first, second);
     }
 
     @Override
     public Object visit(GTOpNode n) {
         String first = (String) n.getChild(0).accept(this);
         String second = (String) n.getChild(1).accept(this);
-        return OPEN_PAR + first + WHITESPACE + GREATER_THAN + WHITESPACE + second + CLOSE_PAR;
+        return cGenerator.buildString(n, first, second);
     }
 
     @Override
     public Object visit(LEOpNode n) {
         String first = (String) n.getChild(0).accept(this);
         String second = (String) n.getChild(1).accept(this);
-        return OPEN_PAR + first + WHITESPACE + LESSER_EQUALS + WHITESPACE + second + CLOSE_PAR;
+        return cGenerator.buildString(n, first, second);
     }
 
     @Override
     public Object visit(LTOpNode n) {
         String first = (String) n.getChild(0).accept(this);
         String second = (String) n.getChild(1).accept(this);
-        return OPEN_PAR + first + WHITESPACE + LESSER_THAN + WHITESPACE + second + CLOSE_PAR;
+        return cGenerator.buildString(n, first, second);
     }
 
     @Override
     public Object visit(UminusOpNode n) {
         String first = (String) n.getChild(0).accept(this);
-        return OPEN_PAR + MINUS + first + CLOSE_PAR;
+        return cGenerator.buildString(n, first);
     }
 
     @Override
     public Object visit(NotOpNode n) {
         String first = (String) n.getChild(0).accept(this);
-        return OPEN_PAR + NOT + first + CLOSE_PAR;
+        return cGenerator.buildString(n, first);
     }
 
     @Override
     public Object visit(AssignOpNode n) {
         String first = (String) n.getChild(0).accept(this);
         String second = (String) n.getChild(1).accept(this);
-        return first + " = " + second + SEMICOLON + NEWLINE;
+        return cGenerator.buildString(n, first, second);
     }
 
     @Override
     public Object visit(IfThenOpNode n) {
         String condition = (String) n.getChild(0).accept(this);
-        String thenBody = (String) n.getChild(1).accept(this);
-        return IF + WHITESPACE + OPEN_PAR + condition + CLOSE_PAR + WHITESPACE + OPEN_BRACKET + NEWLINE + thenBody + CLOSE_BRACKET + NEWLINE;
+        String thenBranch = (String) n.getChild(1).accept(this);
+        return cGenerator.buildString(n, condition, thenBranch);
     }
 
     @Override
     public Object visit(IfThenElseOpNode n) {
         String condition = (String) n.getChild(0).accept(this);
-        String thenBody = (String) n.getChild(1).accept(this);
-        String elseBody = (String) n.getChild(2).accept(this);
-        return IF + WHITESPACE + OPEN_PAR + condition + CLOSE_PAR + WHITESPACE + OPEN_BRACKET + NEWLINE + thenBody + CLOSE_BRACKET + WHITESPACE + ELSE + WHITESPACE + OPEN_BRACKET + NEWLINE + elseBody + CLOSE_BRACKET + NEWLINE;
+        String thenBranch = (String) n.getChild(1).accept(this);
+        String elseBranch = (String) n.getChild(2).accept(this);
+        return cGenerator.buildString(n, condition, thenBranch, elseBranch);
     }
 
     @Override
     public Object visit(WhileOpNode n) {
         String condition = (String) n.getChild(0).accept(this);
-        String whileBody = (String) n.getChild(1).accept(this);
-        return WHILE + WHITESPACE + OPEN_PAR + condition + CLOSE_PAR + WHITESPACE + OPEN_BRACKET + NEWLINE + whileBody + CLOSE_BRACKET + NEWLINE;
+        String body = (String) n.getChild(1).accept(this);
+        return cGenerator.buildString(n, condition, body);
     }
 
     //TODO Mandare & se il corrispondente parametro è di out o inout
@@ -384,25 +334,38 @@ public class CGeneratorVisitor extends TreeVisitor {
         return procedureName + OPEN_PAR + argsList + CLOSE_PAR + SEMICOLON + NEWLINE;
     }
 
-    // TODO Mancano le & e consulatare la tab dei simboli per la stringa di stringa di formattazione
     @Override
     public Object visit(ReadOpNode n) {
-        String args = (String) n.getChild(0).accept(this);
-        String format = "%s";
-        return SCANF + OPEN_PAR + QUOTES + format + QUOTES + COMMA + WHITESPACE + args + CLOSE_PAR + SEMICOLON + NEWLINE;
+        cGenerator.setReadOp(true);
+        ArgsNode argsNode = (ArgsNode) n.getChild(0);
+        ArrayList<ExpressionNode> argList = new ArrayList<>();
+        for (int i = 0; i < argsNode.childrenNumber(); i++) {
+            argList.add((ExpressionNode) argsNode.getChild(i));
+        }
+
+        String args = (String) argsNode.accept(this);
+        String result = cGenerator.buildString(n, argList, args);
+        cGenerator.setReadOp(false);
+
+        return result;
     }
 
-    // TODO Consulatare la tab dei simboli per la stringa di formattazione
+    // TODO stringa di formattazione
     @Override
     public Object visit(WriteOpNode n) {
-        String args = (String) n.getChild(0).accept(this);
-        String format = "%s";
-        return PRINTF + OPEN_PAR + QUOTES + format + QUOTES + COMMA + WHITESPACE + args + CLOSE_PAR + SEMICOLON + NEWLINE;
+        ArgsNode argsNode = (ArgsNode) n.getChild(0);
+        ArrayList<ExpressionNode> argList = new ArrayList<>();
+        for (int i = 0; i < argsNode.childrenNumber(); i++) {
+            argList.add((ExpressionNode) argsNode.getChild(i));
+        }
+
+        String args = (String) argsNode.accept(this);
+        return cGenerator.buildString(n, argList, args);
     }
 
     @Override
     public Object visit(TypeNode n) {
-        return n.getType();
+        return cGenerator.buildString(n);
     }
 
     @Override
@@ -432,7 +395,7 @@ public class CGeneratorVisitor extends TreeVisitor {
 
     @Override
     public Object visit(ParTypeNode n) {
-        return n.getType();
+        return cGenerator.buildString(n);
     }
 
     @Override

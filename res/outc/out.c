@@ -14,15 +14,15 @@ printf("%s", "5. Divisione\n");
 void scegliOperazione(int *scelta) {
 printf("%s", "Scegli l'operazione: ");
 *scelta = (-1);
-while (((*scelta < 0) && (*scelta >= 5))) {
-scanf("%s", *scelta);
+while (((*scelta < 0) && (*scelta > 5))) {
+scanf("%d", &*scelta);
 }
 }
 void inserisciNumeri(double *primo, double *secondo) {
 printf("%s", "Inserisci il primo numero:");
-scanf("%s", primoNumero);
+scanf("%lf", &primoNumero);
 printf("%s", "Inserisci il secondo numero:");
-scanf("%s", secondoNumero);
+scanf("%lf", &secondoNumero);
 }
 void eseguiOperazione(double primo, double secondo, int operazione, double *risultato) {
 double res = 0;
@@ -52,9 +52,9 @@ mostraMenu();
 } else {
 inserisciNumeri(primoNumero, secondoNumero);
 eseguiOperazione(primoNumero, secondoNumero, scelta, risultato);
-printf("%s", risultato);
+printf("%lf", risultato);
 }
 scegliOperazione(scelta);
 }
-printf("%s", "Arriverderci!", "\nBuona giornata");
+printf("%s%s", "Arriverderci!", "\nBuona giornata");
 }
