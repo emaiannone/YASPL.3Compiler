@@ -18,78 +18,74 @@ import java.util.ArrayList;
 @SuppressWarnings({"unchecked", "Duplicates"})
 public class Driver {
     public static void main(String[] args) {
-        String programName = args[0];
+        if (args.length == 0) {
+            System.out.println("No input file!");
+        } else {
+            String programName = args[0];
 
-        System.out.print("Parsing... ");
-        ProgrammaNode root = null;
-        try {
-            root = parse(programName);
-            System.out.println("successful!");
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("failed!");
-        }
-
-        if (root != null) {
-            System.out.print("Writing XML... ");
+            System.out.print("Parsing... ");
+            ProgrammaNode root = null;
             try {
-                writeToFile("res/outxml/AST.xml", getXML(root));
+                root = parse(programName);
                 System.out.println("successful!");
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                System.out.println("failed!");
-            }
-
-            System.out.print("Scope checking...");
-            boolean scopeOK = false;
-            try {
-                ArrayList<String> scopeErrors = scopeCheck(root);
-                if (scopeErrors.isEmpty()) {
-                    System.out.println("successful!");
-                    scopeOK = true;
-                } else {
-                    System.out.println("failed:");
-                    printErrors(scopeErrors);
-                }
             } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("failed!");
             }
 
-            if (scopeOK) {
-                System.out.print("Type checking...");
-                boolean typeOK = false;
+            if (root != null) {
+                System.out.print("Writing XML... ");
                 try {
-                    ArrayList<String> typeErrors = typeCheck(root);
-                    if (typeErrors.isEmpty()) {
+                    writeToFile("AST.xml", getXML(root));
+                    System.out.println("successful!");
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    System.out.println("failed!");
+                }
+
+                System.out.print("Scope checking...");
+                boolean scopeOK = false;
+                try {
+                    ArrayList<String> scopeErrors = scopeCheck(root);
+                    if (scopeErrors.isEmpty()) {
                         System.out.println("successful!");
-                        typeOK = true;
+                        scopeOK = true;
                     } else {
                         System.out.println("failed:");
-                        printErrors(typeErrors);
+                        printErrors(scopeErrors);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("failed!");
                 }
 
-                if (typeOK) {
-                    System.out.print("Generating C Source Code... ");
+                if (scopeOK) {
+                    System.out.print("Type checking...");
+                    boolean typeOK = false;
                     try {
-                        writeToFile("res/outc/out.c", generateCSource(root));
-                        System.out.println("successful!");
-                    } catch (FileNotFoundException e) {
+                        ArrayList<String> typeErrors = typeCheck(root);
+                        if (typeErrors.isEmpty()) {
+                            System.out.println("successful!");
+                            typeOK = true;
+                        } else {
+                            System.out.println("failed:");
+                            printErrors(typeErrors);
+                        }
+                    } catch (Exception e) {
                         e.printStackTrace();
                         System.out.println("failed!");
                     }
 
-                    //TODO Fare l'altro programma chiesto nel pdf
-
-                    //TODO Compilare con clang
-
-                    //TODO Permettere il lancio da linea di comando
-
-                    //TODO Finire documentazione
+                    if (typeOK) {
+                        System.out.print("Generating C Source Code... ");
+                        try {
+                            writeToFile(programName + ".c", generateCSource(root));
+                            System.out.println("successful!");
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                            System.out.println("failed!");
+                        }
+                    }
                 }
             }
         }

@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="FullYASPL.3:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/FullYASPL_3_jar</output-path>
+    <root id="archive" name="FullYASPL.3.jar">
+      <element id="module-output" name="FullYASPL.3" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/de/jflex/jflex/1.7.0/jflex-1.7.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/de/jflex/cup_runtime/11b/cup_runtime-11b.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/ant/ant/1.9.7/ant-1.9.7.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/ant/ant-launcher/1.9.7/ant-launcher-1.9.7.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/scalified/tree/0.2.5/tree-0.2.5.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

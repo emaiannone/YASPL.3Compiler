@@ -1,0 +1,148 @@
+/*
+    Si sviluppi e compili anche il programma YASPL.3 che svolga (a richiesta tramite menu)
+    1. la somma di due numeri
+    2. la moltiplicazione di due numeri utilizzando la somma
+    3. la divisione intera fra due numeri positivi
+    4. l’elevamento a potenza
+    5. la successione di Fibonacci
+*/
+
+head
+    int scelta;
+    int primoNumero, secondoNumero, risultato;
+
+    def mostraMenu() {
+        "0. Termina\n" ->;
+        "1. Somma\n" ->;
+        "2. Moltiplicazione\n" ->;
+        "3. Divisione\n" ->;
+        "4. Elevamento a potenza\n" ->;
+        "5. Fibonacci\n" ->;
+    }
+
+    def leggiNumeri(out int primoNumero, out int secondoNumero) {
+        "Inserisci primo numero intero: " ->;
+        primoNumero <-;
+        "Inserisci secondo numero intero: " ->;
+        secondoNumero <-;
+    }
+
+    def leggiNumeriPositivi(out int primoNumero, out int secondoNumero) {
+        primoNumero = 0;
+        while (primoNumero <= 0) do {
+            "Inserisci primo numero intero positivo: " ->;
+            primoNumero <-;
+        }
+
+        secondoNumero = 0;
+        while (secondoNumero <= 0) do {
+            "Inserisci secondo numero intero positivo: " ->;
+            secondoNumero <-;
+        }
+    }
+
+    def leggiNumeroPositivo(out int numero) {
+        numero = 0;
+        while (numero <= 0) do {
+            "Inserisci numero intero positivo: " ->;
+            numero <-;
+        }
+    }
+
+    def somma(in int primo, in int secondo, out int risultato) {
+        risultato = primo + secondo;
+    }
+
+    def moltiplicazione(in int primo, in int secondo, out int risultato) {
+        int i = 0;
+        int n = secondo;
+
+        if(secondo < 0) then {
+            n = - secondo;
+        }
+
+        risultato = 0;
+        while(i < n) do {
+            risultato = risultato + primo;
+            i = i + 1;
+        }
+
+        if(secondo < 0) then {
+            risultato = - risultato;
+        }
+    }
+
+    def divisione(in int primo, in int secondo, out int risultato) {
+        risultato = primo / secondo;
+    }
+
+    def potenza(in int base, in int esp, out int risultato) {
+        int i = 0;
+
+        risultato = 1;
+        while(i < esp) do {
+            risultato = risultato * base;
+            i = i + 1;
+        }
+    }
+
+    def fibonacci(in int numero, out int risultato) {
+        int a, b, c, i;
+
+        if(numero <= 0) then {
+            risultato = 0;
+        } else {
+            if(numero == 1) then {
+                risultato = 1;
+            } else {
+                a = 0;
+                b = 1;
+                i = 2;
+                while(i < numero) do {
+                    c = a + b;
+                    a = b;
+                    b = c;
+                    i = i +1;
+                }
+                risultato = c;
+            }
+        }
+    }
+
+start
+    "Benvenuto!\n" ->;
+    mostraMenu();
+
+    scelta = -1;
+    while (not (scelta == 0)) do {
+        "Scelta: " ->;
+        scelta <-;
+        if(scelta > 0 or scelta < 6) then {
+            if(scelta == 1) then {
+                leggiNumeri(primoNumero, secondoNumero);
+                somma(primoNumero, secondoNumero, risultato);
+            } else {
+                if(scelta == 2) then {
+                    leggiNumeri(primoNumero, secondoNumero);
+                    moltiplicazione(primoNumero, secondoNumero, risultato);
+                } else {
+                    if(scelta == 3) then {
+                        leggiNumeriPositivi(primoNumero, secondoNumero);
+                        divisione(primoNumero, secondoNumero, risultato);
+                    } else {
+                        if(scelta == 4) then {
+                            leggiNumeriPositivi(primoNumero, secondoNumero);
+                            potenza(primoNumero, secondoNumero, risultato);
+                        } else {
+                            if(scelta == 5) then {
+                                leggiNumeroPositivo(primoNumero);
+                                fibonacci(primoNumero, risultato);
+                            }
+                        }
+                    }
+                }
+            }
+            risultato, "\n" ->;
+        }
+    }
+    "Arrivederci!" ->;
