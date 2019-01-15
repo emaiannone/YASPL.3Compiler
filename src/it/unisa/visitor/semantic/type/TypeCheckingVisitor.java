@@ -14,6 +14,7 @@ import it.unisa.ast.programma.ProgrammaNode;
 import it.unisa.ast.statement.AssignOpNode;
 import it.unisa.ast.statement.CallOpNode;
 import it.unisa.ast.statement.ReadOpNode;
+import it.unisa.ast.statement.WriteOpNode;
 import it.unisa.ast.statement.conditional.ConditionalStatementNode;
 import it.unisa.ast.statement.conditional.IfThenElseOpNode;
 import it.unisa.ast.statement.conditional.IfThenOpNode;
@@ -163,6 +164,12 @@ public class TypeCheckingVisitor extends SemanticVisitor {
 
     @Override
     public Object visit(ReadOpNode n) {
+        // It first goes to the inductive base to calculate the type of the inner-most operations
+        return buildResult((ArrayList<String>) visitSubtree(n), typeChecker.assignType(n));
+    }
+
+    @Override
+    public Object visit(WriteOpNode n) {
         // It first goes to the inductive base to calculate the type of the inner-most operations
         return buildResult((ArrayList<String>) visitSubtree(n), typeChecker.assignType(n));
     }

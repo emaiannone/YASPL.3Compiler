@@ -6,7 +6,7 @@ head
 
     }
 
-    def wrongMath() {
+    def wrongMath(in int a) {
         bool wrongBool;
 
         scelta = scelta + true;
@@ -20,7 +20,8 @@ head
 
         wrongProcedure();
         wrongProcedure(2.0, scelta + 2, 2, wrongProcedure);
-        wrongProcedure <- ;
+        wrongProcedure <-;
+        wrongProcedure ->;
         2+2, scelta <- ;
     }
 

@@ -83,7 +83,15 @@ public class Driver {
                         System.out.println("failed!");
                     }
 
-                    //TODO Lancio clang sul file generato
+                    //TODO Testare cavolate varie in ErroriScope e ErroriType
+
+                    //TODO Fare l'altro programma chiesto nel pdf
+
+                    //TODO Compilare con clang
+
+                    //TODO Permettere il lancio da linea di comando
+
+                    //TODO Finire documentazione
                 }
             }
         }

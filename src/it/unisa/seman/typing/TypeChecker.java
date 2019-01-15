@@ -9,6 +9,7 @@ import it.unisa.ast.expression.identifier.IdentifierNode;
 import it.unisa.ast.statement.AssignOpNode;
 import it.unisa.ast.statement.CallOpNode;
 import it.unisa.ast.statement.ReadOpNode;
+import it.unisa.ast.statement.WriteOpNode;
 import it.unisa.ast.statement.conditional.ConditionalStatementNode;
 import it.unisa.ast.type.*;
 import it.unisa.seman.ParameterData;
@@ -66,6 +67,10 @@ public class TypeChecker extends SemanticChecker {
 
     private String buildReadIllegalProcedure(String procedureName) {
         return "The procedure name " + procedureName + " cannot be used as a read argument";
+    }
+
+    private String buildWriteIllegalProcedure(String procedureName) {
+        return "The procedure name " + procedureName + " cannot be used as a write argument";
     }
 
     //Type Check D
@@ -234,6 +239,28 @@ public class TypeChecker extends SemanticChecker {
                 }
             } else {
                 errors.add(TYPE_MISMATCH_READ);
+            }
+        }
+        if (errors.isEmpty()) {
+            n.setType(TypeNode.VOID);
+        }
+        return errors;
+    }
+
+    public ArrayList<String> assignType(WriteOpNode n) {
+        ArrayList<String> errors = new ArrayList<>();
+
+        ArgsNode exprList = (ArgsNode) n.getChild(0);
+        for (int i = 0; i < exprList.childrenNumber(); i++) {
+            ExpressionNode expr = (ExpressionNode) exprList.getChild(i);
+            if (expr.data() != null) {
+                SemanticData exprData = getSymbolTable().lookup(expr.data().toString());
+                if (exprData != null) {
+                    String kind = exprData.getKind();
+                    if (kind.equals(ProcedureDeclarationNode.PROCEDURE)) {
+                        errors.add(buildWriteIllegalProcedure((String) expr.data()));
+                    }
+                }
             }
         }
         if (errors.isEmpty()) {

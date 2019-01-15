@@ -1,10 +1,7 @@
 #include <stdio.h>
 int scelta = 1;
 double primoNumero, secondoNumero, risultato;
-char stringa[];
-int esse, esse2;
 void mostraMenu() {
-esse = 1;
 printf("%s", "0. Termina\n");
 printf("%s", "1. Mostra il menu\n");
 printf("%s", "2. Somma\n");
@@ -15,16 +12,15 @@ printf("%s", "5. Divisione\n");
 void scegliOperazione(int *scelta) {
 printf("%s", "Scegli l'operazione: ");
 *scelta = (-1);
-while (((*scelta < 0) && (*scelta > 5))) {
+while (((*scelta < 0) || (*scelta > 5))) {
 scanf("%d", &*scelta);
 }
 }
-void inserisciNumeri(double *primo, double *secondo, int hello) {
-*primo = (*primo + 1);
+void inserisciNumeri(double *primo, double *secondo) {
 printf("%s", "Inserisci il primo numero:");
-scanf("%lf", &*primo);
+scanf("%lf", &primoNumero);
 printf("%s", "Inserisci il secondo numero:");
-scanf("%lf", &*secondo);
+scanf("%lf", &secondoNumero);
 }
 void eseguiOperazione(double primo, double secondo, int operazione, double *risultato) {
 double res = 0;
@@ -35,7 +31,7 @@ if ((operazione == 3)) {
 res = (primoNumero - secondoNumero);
 } else {
 if ((operazione == 4)) {
-res = (primoNumero - secondoNumero);
+res = (primoNumero * secondoNumero);
 } else {
 if ((operazione == 5)) {
 if ((!(secondoNumero == 0))) {
@@ -52,9 +48,9 @@ while ((!(scelta == 0))) {
 if ((scelta == 1)) {
 mostraMenu();
 } else {
-inserisciNumeri(&primoNumero, &secondoNumero, (2 + 2));
+inserisciNumeri(&primoNumero, &secondoNumero);
 eseguiOperazione(primoNumero, secondoNumero, scelta, &risultato);
-printf("%lf%d", risultato, (2 + 2));
+printf("%lf%s", risultato, "\n");
 }
 scegliOperazione(&scelta);
 }

@@ -10,11 +10,8 @@
 head
     int scelta = 1;
     double primoNumero, secondoNumero, risultato;
-    string stringa;
-    bool esse, esse2;
 
     def mostraMenu() {
-        esse = true;
         "0. Termina\n" ->;
         "1. Mostra il menu\n" ->;
         "2. Somma\n" ->;
@@ -26,17 +23,16 @@ head
     def scegliOperazione(out int scelta) {
         "Scegli l'operazione: " ->;
         scelta = -1;
-        while(scelta < 0 and scelta > 5) do {
+        while(scelta < 0 or scelta > 5) do {
             scelta <-;
         }
     }
 
-    def inserisciNumeri(out double primo, out double secondo, in int hello) {
-        primo = primo +1;
+    def inserisciNumeri(out double primo, out double secondo) {
         "Inserisci il primo numero:" ->;
-        primo <-;
+        primoNumero <-;
         "Inserisci il secondo numero:" ->;
-        secondo <-;
+        secondoNumero <-;
     }
 
     def eseguiOperazione(in double primo, in double secondo, in int operazione, out double risultato) {
@@ -48,7 +44,7 @@ head
                 res = primoNumero - secondoNumero;
             } else {
                 if(operazione == 4) then {
-                    res = primoNumero - secondoNumero;
+                    res = primoNumero * secondoNumero;
                 } else {
                     if(operazione == 5) then {
                         if(not (secondoNumero == 0)) then {
@@ -66,9 +62,9 @@ start
         if (scelta == 1) then {
             mostraMenu();
         } else {
-            inserisciNumeri(primoNumero, secondoNumero, 2+2);
+            inserisciNumeri(primoNumero, secondoNumero);
             eseguiOperazione(primoNumero, secondoNumero, scelta, risultato);
-            risultato, 2+2 ->;
+            risultato, "\n" ->;
         }
         scegliOperazione(scelta);
     }
