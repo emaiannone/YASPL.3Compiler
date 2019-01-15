@@ -1,0 +1,10 @@
+head
+    int a, b, c;
+start
+    a, b, c <-;
+    '\t', -a + -(-2*b / c), '\n' ->;
+    if(a >= b and a <= 12 or not (c == 12)) then {
+        "Ramo Then" ->;
+    } else {
+        "Ramo Else" ->;
+    }

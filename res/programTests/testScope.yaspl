@@ -3,18 +3,25 @@ head
     double primoNumero, secondoNumero, risultato;
     int global;
 
-    def mostraMenu(in int sharedParameter) {
-        int sharedParameter;
+    def wrongScope(in int sharedParameter, in double scelta, in int risultato) {
+        int sharedParameter;    //Errore: doppia dichiarazione
+        int wrongScope;         //Non è errore: Non essondo supportata la ricorsione, wrongScope non sta nello scope della procedura
 
-        sharedParameter = 2;
-        nonVariable1 = nonVariable2 + nonVariable3 + nonVariable4;
-        nonRead1 <-;
-        nonProcedure1(nonParameter1, nonParameter2);
-        nonOut1 + 2 ->;
-        if(nonCondition1) then {
-            nonOut2 ->;
+        nonVar1 = nonVar2 + nonVar3 + nonVar4;  //Errori: Nessuna delle 4 è dichiarata
+        nonRead1 <-;                                                //Errore: Non dichiarata
+        nonProcedure1(nonParameter1, nonParameter2);                //Errore: Procedura c'è ma sta dopo e i parametri non sono dichiarati
+        nonOut1 + 2 ->;                                             //Errore: Non dichiarata
+        if (nonCondition1) then {                                   //Errore: Non dichiarata
+            nonOut2 ->;                                             //Errore: Non dichiarata
+        }
+        while (not (not nonCondition2 and true) or nonVar3 > 4) do {      //Errore: Non dichiarata
         }
     }
+
+    def nonProcedure1() {
+    }
+
+    int wrongScope;                                                 //Errore: doppia dichiarazione
 
     def mostraMenu() {
         "0. Termina\n" ->;

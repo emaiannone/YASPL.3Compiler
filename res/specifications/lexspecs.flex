@@ -29,6 +29,10 @@ import java_cup.runtime.Symbol;
   private Symbol symbol(int kind, Object value) {
       return new Symbol(kind, yyline, yycolumn, value);
   }
+
+  private char clearEscape(String string) {
+      return string.replace("\\n", "\n").replace("\\r", "\r").replace("\\t", "\t").charAt(1);
+  }
 %}
 
 // Macros
@@ -59,7 +63,7 @@ div = \/
 int_const =  (0|[1-9]([0-9])*)
 double_const = (0|[1-9]([0-9])*)\.([0-9])+((E|e)(\+|\-)?[1-9]([0-9])*)?
 string_const = \"([^\r\n\"\\]|\\t|\\n|\\r|\\\"|\\\\)*\"
-char_const = \'([^\r\n\"\'\\]|\\t|\\n|\\r|\\\"|\\\'|\\\\)?\'
+char_const = \'([^\r\n\"\'\\]|\\t|\\n|\\r|\\\"|\\\'|\\\\)\'
 
 true = true
 false = false
@@ -115,7 +119,7 @@ eolcomment =  \/\/[^\r\n]*
 {int_const}       {return symbol(ParserSym.INT_CONST, Integer.parseInt(yytext()));}
 {double_const}    {return symbol(ParserSym.DOUBLE_CONST, Double.parseDouble(yytext()));}
 {string_const}    {return symbol(ParserSym.STRING_CONST, yytext());}
-{char_const}      {return symbol(ParserSym.CHAR_CONST, yytext().charAt(1));}
+{char_const}      {return symbol(ParserSym.CHAR_CONST, clearEscape(yytext()));}
 
 {true}            {return symbol(ParserSym.TRUE);}
 {false}           {return symbol(ParserSym.FALSE);}

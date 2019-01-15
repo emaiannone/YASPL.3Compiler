@@ -1,58 +1,11 @@
 #include <stdio.h>
-int scelta = 1;
-double primoNumero, secondoNumero, risultato;
-void mostraMenu() {
-printf("%s", "0. Termina\n");
-printf("%s", "1. Mostra il menu\n");
-printf("%s", "2. Somma\n");
-printf("%s", "3. Sottrazione\n");
-printf("%s", "4. Prodotto\n");
-printf("%s", "5. Divisione\n");
-}
-void scegliOperazione(int *scelta) {
-printf("%s", "Scegli l'operazione: ");
-*scelta = (-1);
-while (((*scelta < 0) || (*scelta > 5))) {
-scanf("%d", &*scelta);
-}
-}
-void inserisciNumeri(double *primo, double *secondo) {
-printf("%s", "Inserisci il primo numero:");
-scanf("%lf", &primoNumero);
-printf("%s", "Inserisci il secondo numero:");
-scanf("%lf", &secondoNumero);
-}
-void eseguiOperazione(double primo, double secondo, int operazione, double *risultato) {
-double res = 0;
-if ((operazione == 2)) {
-res = (primoNumero + secondoNumero);
-} else {
-if ((operazione == 3)) {
-res = (primoNumero - secondoNumero);
-} else {
-if ((operazione == 4)) {
-res = (primoNumero * secondoNumero);
-} else {
-if ((operazione == 5)) {
-if ((!(secondoNumero == 0))) {
-res = (primoNumero / secondoNumero);
-}
-}
-}
-}
-}
-*risultato = res;
-}
+int a, b, c;
 int main() {
-while ((!(scelta == 0))) {
-if ((scelta == 1)) {
-mostraMenu();
+scanf("%d%d%d", &a, &b, &c);
+printf("%c%d%c", '\t', ((-a) + (-(((-2) * b) / c))), '\n');
+if ((((a >= b) && (a <= 12)) || (!(c == 12)))) {
+printf("%s", "Ramo Then");
 } else {
-inserisciNumeri(&primoNumero, &secondoNumero);
-eseguiOperazione(primoNumero, secondoNumero, scelta, &risultato);
-printf("%lf%s", risultato, "\n");
+printf("%s", "Ramo Else");
 }
-scegliOperazione(&scelta);
-}
-printf("%s%s", "Arriverderci!", "\nBuona giornata");
 }

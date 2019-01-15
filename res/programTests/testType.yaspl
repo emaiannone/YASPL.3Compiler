@@ -8,21 +8,30 @@ head
 
     def wrongMath(in int a) {
         bool wrongBool;
+        char risultato;
 
-        scelta = scelta + true;
-        scelta = scelta / "";
-        scelta = - 'c';
-        wrongBool = 2;
+        risultato = 2.0;                //Errore: questo risultato è locale, e non è double
 
-        if ("ciao" < 'c') then {}
-        while (2) do {}
-        if("vero") then {} else {}
+        scelta = scelta + true;         //Errore: somma di int e bool e di conseguenza la somma non ha tipo
+        scelta = scelta / "";           //Errore: divisione di int e string e di conseguenza la divisione non ha tipo
+        scelta = - 'c';                 //Errore: negazione di carattere e di conseguenza la negazione non ha tipo
 
-        wrongProcedure();
-        wrongProcedure(2.0, scelta + 2, 2, wrongProcedure);
-        wrongProcedure <-;
-        wrongProcedure ->;
-        2+2, scelta <- ;
+        wrongBool = 2;                  //Errore: assegnazione intero a bool
+
+        if ("ciao" < 'c') then {}       //Errore: string e char inconfrontabili e di conseguenza la condizione non ha tipo
+        while (2) do {}                 //Errore: condizione intera non va bene
+        if("true") then {} else {}      //Errore: condizione stringa non va bene
+
+        wrongProcedure();                   //Errore: numero parametri insufficiente
+        wrongProcedure(1, 2, '3', 4, 5);    //Errore: troppi parametri
+        wrongProcedure(2.0, scelta + 2, false, wrongProcedure); //Errori vari:
+                                                                //primo parametro: attuale double, formale int
+                                                                //Secondo: attuale espressione, formale di output
+                                                                //Terzo: attuale bool, formale char
+                                                                //Quarto: nome procedura non va bene come parametro
+        wrongProcedure, wrongBool <-;                   //Errore: procedura non può essere letta
+        wrongProcedure, "ciao" ->;                      //Errore: procedura non può essere scritta
+        2+2, scelta <- ;                                //Errore: espressione non può essere letta
     }
 
     def mostraMenu() {

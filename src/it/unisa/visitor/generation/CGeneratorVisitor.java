@@ -151,7 +151,7 @@ public class CGeneratorVisitor extends TreeVisitor {
 
     @Override
     public Object visit(CharConstantNode n) {
-        return n.data().toString();
+        return cGenerator.buildCharConstantString(n.data().toString());
     }
 
     @Override

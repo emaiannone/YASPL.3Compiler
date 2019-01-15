@@ -47,6 +47,7 @@ public class CGenerator {
     private static final String SEMICOLON = ";";
     private static final String NEWLINE = "\n";
     private static final String WHITESPACE = " ";
+    private static final String SINGLE_QUOTE = "\'";
     private static final String QUOTES = "\"";
 
     private SymbolTable symbolTable;
@@ -133,6 +134,13 @@ public class CGenerator {
             }
         }
         return argList.toString();
+    }
+
+    public String buildCharConstantString(String charData) {
+        charData = charData.replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
+        return SINGLE_QUOTE + charData + SINGLE_QUOTE;
     }
 
     public String buildIdentifierString(String identifierName) {
